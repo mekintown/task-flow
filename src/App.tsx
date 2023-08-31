@@ -1,8 +1,12 @@
+import Sidebar from "./components/Sidebar";
+import TopMenu from "./components/TopMenu";
+
 function App() {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+    <div>
+      <TopMenu />
+      <Sidebar />
+    </div>
   );
 }
 
