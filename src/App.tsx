@@ -1,11 +1,19 @@
-import Sidebar from "./components/Sidebar";
+import BoardCard from "./components/BoardCard";
+import LoginForm from "./components/LoginForm";
+import Sidebar from "./components/Sidebar/Sidebar";
 import TopMenu from "./components/TopMenu";
 
 function App() {
   return (
+    // <div className="flex items-stretch h-screen">
+    //   <Sidebar />
+    //   <div className="flex-grow">
+    //     <TopMenu />
+    //     <BoardCard />
+    //   </div>
+    // </div>
     <div>
-      <TopMenu />
-      <Sidebar />
+      <LoginForm />
     </div>
   );
 }
