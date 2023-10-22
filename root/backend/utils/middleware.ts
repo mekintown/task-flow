@@ -3,7 +3,7 @@ import logger from "./logger";
 
 const requestLogger = (
   request: Request,
-  response: Response,
+  _response: Response,
   next: NextFunction
 ): void => {
   logger.info("Method:", request.method);
@@ -13,13 +13,13 @@ const requestLogger = (
   next();
 };
 
-const unknownEndpoint = (request: Request, response: Response): void => {
+const unknownEndpoint = (_request: Request, response: Response): void => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
 const errorHandler = (
   error: Error,
-  request: Request,
+  _request: Request,
   response: Response,
   next: NextFunction
 ): void => {
@@ -36,4 +36,4 @@ const errorHandler = (
   }
 };
 
-export { requestLogger, unknownEndpoint, errorHandler };
+export default { requestLogger, unknownEndpoint, errorHandler };
