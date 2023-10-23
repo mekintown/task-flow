@@ -79,10 +79,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [your-email@example.com]
+Maekin Namwong - [mekintown@gmail.com]
 
-Project Link: [https://github.com/your-username/task-management-tool](https://github.com/your-username/task-management-tool)
-
----
-
-**Note**: You'll need to replace placeholders (`your-username`, `Your Name`, `your-email@example.com`, etc.) with appropriate values relevant to your GitHub profile and project. Additionally, consider adding screenshots or GIFs of your app in action for a more visual and engaging README.
+Project Link: [https://github.com/mekintown/task-flowl](https://github.com/mekintown/task-flow)
