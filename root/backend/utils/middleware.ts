@@ -13,6 +13,18 @@ const requestLogger = (
   next();
 };
 
+export const asyncMiddleware =
+  (
+    fn: (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ) => void | Promise<void>
+  ) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+
 const unknownEndpoint = (_request: Request, response: Response): void => {
   response.status(404).send({ error: "unknown endpoint" });
 };
@@ -36,4 +48,8 @@ const errorHandler = (
   }
 };
 
-export default { requestLogger, unknownEndpoint, errorHandler };
+export default {
+  requestLogger,
+  unknownEndpoint,
+  errorHandler,
+};

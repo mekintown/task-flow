@@ -2,16 +2,9 @@ import bcrypt from "bcrypt";
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/user"; // Assuming that User is the default export from the user model
 import { toNewUser } from "../utils/typeValidators";
+import { asyncMiddleware } from "../utils/middleware";
 
 const usersRouter = express.Router();
-
-function asyncMiddleware(
-  fn: (req: Request, res: Response, next: NextFunction) => void | Promise<void>
-) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-}
 
 usersRouter.post(
   "/",

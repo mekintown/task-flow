@@ -1,7 +1,7 @@
-import { Schema } from "mongoose";
+import { ObjectId, Schema } from "mongoose";
 
 export interface User extends Document {
-  id: string;
+  id: ObjectId;
   username: string;
   name?: string;
   passwordHash: string;

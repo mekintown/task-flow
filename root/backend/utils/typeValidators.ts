@@ -27,3 +27,19 @@ export const toNewUser = (object: unknown): NewUser => {
 
   throw new Error("Incorrect data: a field missing");
 };
+
+export const toLoginUser = (object: unknown): NewUser => {
+  if (!object || typeof object !== "object" || Array.isArray(object)) {
+    throw new Error("Incorrect or missing data");
+  }
+
+  if ("username" in object && "password" in object) {
+    const newUser: NewUser = {
+      username: parseString("username", object.username),
+      password: parseString("password", object.password),
+    };
+    return newUser;
+  }
+
+  throw new Error("Incorrect data: a field missing");
+};
