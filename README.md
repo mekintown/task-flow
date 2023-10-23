@@ -1,46 +1,88 @@
-# Getting Started with Create React App
+# Task Management Tool
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An efficient and user-friendly task management application inspired by popular tools like Trello and Asana. Built with React.js for the frontend, Node.js and Express.js for the backend, and MongoDB as the database.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **User Authentication**: Register, login, and manage sessions securely.
+- **Task Management**: Create, edit, delete, and move tasks between different boards such as "To Do", "In Progress", and "Completed".
+- **Collaborative Boards**: Collaborate with other users on shared boards.
+- **Notifications**: Receive reminders for due tasks.
+- **User Profiles**: Manage and view user profiles and settings.
 
-### `npm start`
+## Table of Contents
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- [Installation](#installation)
+- [Usage](#usage)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Installation
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js and npm installed
+- MongoDB instance (local or cloud)
 
-### `npm run build`
+### Steps
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```sh
+   git clone https://github.com/your-username/task-management-tool.git
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Navigate to the project directory:
 
-### `npm run eject`
+   ```sh
+   cd task-flow/root/
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. Install dependencies:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```sh
+   npm run installAll
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4. Create a `.env` file in the root/backend/ directory and add the necessary environment variables (e.g., `MONGODB_URI`, `JWT_SECRET`).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Usage
 
-## Learn More
+1. Start the server:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   ```sh
+   npm run dev
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   The application should now be running on `http://localhost:3000` & `http://localhost:3003`.
+
+## Testing
+
+Ensure you have all dependencies installed. Run the test script:
+
+```sh
+npm test
+```
+
+## Contributing
+
+1. Fork the project.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -am 'Add some feature'`).
+4. Push to the branch (`git push origin feature/YourFeature`).
+5. Open a pull request.
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Contact
+
+Your Name - [your-email@example.com]
+
+Project Link: [https://github.com/your-username/task-management-tool](https://github.com/your-username/task-management-tool)
+
+---
+
+**Note**: You'll need to replace placeholders (`your-username`, `Your Name`, `your-email@example.com`, etc.) with appropriate values relevant to your GitHub profile and project. Additionally, consider adding screenshots or GIFs of your app in action for a more visual and engaging README.
