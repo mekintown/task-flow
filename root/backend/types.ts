@@ -26,3 +26,11 @@ export interface Board extends Document {
 export interface RequestWithToken extends Request {
   token?: string;
 }
+
+export interface Task {
+  title: string;
+  description?: string;
+  priority: "Low" | "Medium" | "High";
+  dueDate: Date;
+  id?: string;
+}
