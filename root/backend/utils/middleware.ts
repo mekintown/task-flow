@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import logger from "./logger";
+import { RequestWithToken } from "../types";
 
 const requestLogger = (
   request: Request,
@@ -25,7 +26,23 @@ export const asyncMiddleware =
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
-const unknownEndpoint = (_request: Request, response: Response): void => {
+const tokenExtractor = (
+  request: RequestWithToken,
+  _response: Response,
+  next: NextFunction
+) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
+  }
+
+  next();
+};
+
+const unknownEndpoint = (
+  _request: RequestWithToken,
+  response: Response
+): void => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
@@ -52,4 +69,6 @@ export default {
   requestLogger,
   unknownEndpoint,
   errorHandler,
+  tokenExtractor,
+  asyncMiddleware,
 };

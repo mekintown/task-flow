@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { ObjectId, Schema } from "mongoose";
 
 export interface User extends Document {
@@ -13,4 +14,15 @@ export interface NewUser {
   username: string;
   name?: string;
   password: string;
+}
+
+export interface Board extends Document {
+  id: ObjectId;
+  name?: string;
+  tasks: Schema.Types.ObjectId[];
+  collaborators: Schema.Types.ObjectId[];
+}
+
+export interface RequestWithToken extends Request {
+  token?: string;
 }
