@@ -94,9 +94,6 @@ boardRouter.delete(
         return;
       }
 
-      console.log(request.owner);
-      console.log(decodedToken);
-
       if (request.owner !== decodedToken.id) {
         response
           .status(HTTP_STATUS.UNAUTHORIZED)
