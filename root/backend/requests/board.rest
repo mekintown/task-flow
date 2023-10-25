@@ -1,6 +1,10 @@
 POST http://localhost:3003/api/boards
 content-type: application/json
 authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzNjI4Y2UxZDFiN2ZkNDZjMjRiZTEwIiwiaWF0IjoxNjk4MjM2Njg3fQ.aa4-J4mEgPKNej67Qzbc4GMMoPl1OSw4PkERAzDecUg
+
 {
     "name": "Chula"
 }
+
+###
+GET http://localhost:3003/api/boards

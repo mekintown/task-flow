@@ -19,8 +19,13 @@ export interface NewUser {
 export interface Board extends Document {
   id: ObjectId;
   name?: string;
+  owner: ObjectId;
   tasks: Schema.Types.ObjectId[];
   collaborators: Schema.Types.ObjectId[];
+}
+
+export interface NewBoard {
+  name: string;
 }
 
 export interface RequestWithToken extends Request {

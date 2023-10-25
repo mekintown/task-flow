@@ -6,6 +6,7 @@ import logger from "./utils/logger";
 import middleware from "./utils/middleware";
 import usersRouter from "./controllers/users";
 import loginRouter from "./controllers/login";
+import boardRouter from "./controllers/boards";
 
 const app: Express = express();
 
@@ -25,9 +26,11 @@ if (config.MONGODB_URI) {
 app.use(cors());
 app.use(express.json());
 app.use(middleware.requestLogger);
+app.use(middleware.tokenExtractor);
 
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/boards", boardRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

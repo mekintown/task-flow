@@ -8,6 +8,10 @@ const boardSchema = new Schema({
     required: true,
     minLength: 3,
   },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   collaborators: [
     {
       type: Schema.Types.ObjectId,

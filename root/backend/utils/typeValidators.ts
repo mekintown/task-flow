@@ -1,4 +1,4 @@
-import { NewUser } from "../types";
+import { NewBoard, NewUser } from "../types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -39,6 +39,21 @@ export const toLoginUser = (object: unknown): NewUser => {
       password: parseString("password", object.password),
     };
     return newUser;
+  }
+
+  throw new Error("Incorrect data: a field missing");
+};
+
+export const toNewBoard = (object: unknown): NewBoard => {
+  if (!object || typeof object !== "object" || Array.isArray(object)) {
+    throw new Error("Incorrect or missing data");
+  }
+
+  if ("name" in object) {
+    const newBoard: NewBoard = {
+      name: parseString("name", object.name),
+    };
+    return newBoard;
   }
 
   throw new Error("Incorrect data: a field missing");

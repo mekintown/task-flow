@@ -6,6 +6,14 @@ import { asyncMiddleware } from "../utils/middleware";
 
 const usersRouter = express.Router();
 
+usersRouter.get(
+  "/",
+  asyncMiddleware(async (_request: Request, response: Response) => {
+    const users = await User.find({});
+    response.json(users);
+  })
+);
+
 usersRouter.post(
   "/",
   asyncMiddleware(
@@ -30,13 +38,4 @@ usersRouter.post(
     }
   )
 );
-
-usersRouter.get(
-  "/",
-  asyncMiddleware(async (_request: Request, response: Response) => {
-    const users = await User.find({});
-    response.json(users);
-  })
-);
-
 export default usersRouter;
