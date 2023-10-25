@@ -1,37 +1,37 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { Task } from "../types";
+import { TASK_PRIORITY } from "../utils/constant";
 
-const TaskPriority = Object.freeze({
-  Low: "Low",
-  Medium: "Medium",
-  High: "High",
-});
-
-const taskSchema = new Schema({
-  board: {
-    type: Schema.Types.ObjectId,
-    ref: "Board",
-    required: true,
+const taskSchema = new Schema<Task>(
+  {
+    board: {
+      type: Schema.Types.ObjectId,
+      ref: "Board",
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      minLength: 3,
+    },
+    description: {
+      type: String,
+    },
+    priority: {
+      type: String,
+      enum: Object.values(TASK_PRIORITY),
+    },
+    dueDate: {
+      type: Date,
+    },
   },
-  title: {
-    type: String,
-    required: true,
-    minLength: 3,
-  },
-  description: {
-    type: String,
-  },
-  priority: {
-    type: String,
-    enum: Object.values(TaskPriority),
-  },
-  dueDate: {
-    type: Date,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 Object.assign(taskSchema.statics, {
-  TaskPriority,
+  TASK_PRIORITY,
 });
 
 taskSchema.set("toJSON", {
@@ -42,6 +42,8 @@ taskSchema.set("toJSON", {
     delete returnedObject.__v;
   },
 });
+
+taskSchema.index({ board: 1 });
 
 const Task = mongoose.model<Task>("Task", taskSchema);
 

@@ -64,7 +64,6 @@ boardRouter.post(
     const board = new Board({ ...newBoard, owner: user._id });
 
     const savedBoard = await board.save();
-    user.boards = user.boards.concat([savedBoard.id]);
     await user.save();
 
     const savedBoardPopulated = await Board.findById(savedBoard._id).populate(

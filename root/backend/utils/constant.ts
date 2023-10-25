@@ -5,3 +5,9 @@ export const HTTP_STATUS = {
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
 };
+
+export const TASK_PRIORITY = {
+  Low: "Low",
+  Medium: "Medium",
+  High: "High",
+};

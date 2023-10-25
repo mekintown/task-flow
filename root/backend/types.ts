@@ -6,6 +6,7 @@ export interface User extends Document {
   username: string;
   name?: string;
   passwordHash: string;
+  deletedAt: Date | null;
 }
 
 export type NonSensitiveUser = Omit<User, "passwordHash">;
@@ -19,6 +20,7 @@ export interface Board extends Document {
   id: ObjectId;
   name?: string;
   owner: ObjectId;
+  deletedAt: Date | null;
 }
 
 export interface NewBoard {

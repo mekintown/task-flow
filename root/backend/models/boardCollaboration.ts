@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { BoardCollaborator } from "../types";
 
-const BoardCollaboratorSchema = new Schema({
+const BoardCollaboratorSchema = new Schema<BoardCollaborator>({
   board: {
     type: Schema.Types.ObjectId,
     ref: "Board",
@@ -25,9 +25,11 @@ BoardCollaboratorSchema.set("toJSON", {
   },
 });
 
-const collaborateWith = mongoose.model<BoardCollaborator>(
+BoardCollaboratorSchema.index({ board: 1, user: 1 }, { unique: true });
+
+const boardCollaborator = mongoose.model<BoardCollaborator>(
   "BoardCollaborator",
   BoardCollaboratorSchema
 );
 
-export default collaborateWith;
+export default boardCollaborator;
