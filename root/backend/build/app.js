@@ -10,6 +10,8 @@ const config_1 = __importDefault(require("./utils/config"));
 const logger_1 = __importDefault(require("./utils/logger"));
 const middleware_1 = __importDefault(require("./utils/middleware"));
 const users_1 = __importDefault(require("./controllers/users"));
+const login_1 = __importDefault(require("./controllers/login"));
+const boards_1 = __importDefault(require("./controllers/boards"));
 const app = (0, express_1.default)();
 if (config_1.default.MONGODB_URI) {
     mongoose_1.default
@@ -27,7 +29,10 @@ else {
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(middleware_1.default.requestLogger);
+app.use(middleware_1.default.tokenExtractor);
 app.use("/api/users", users_1.default);
+app.use("/api/login", login_1.default);
+app.use("/api/boards", boards_1.default);
 app.use(middleware_1.default.unknownEndpoint);
 app.use(middleware_1.default.errorHandler);
 exports.default = app;

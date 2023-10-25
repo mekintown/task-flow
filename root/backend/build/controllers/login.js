@@ -17,10 +17,10 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const express_1 = __importDefault(require("express"));
 const user_1 = __importDefault(require("../models/user"));
 const middleware_1 = require("../utils/middleware");
-const typeValidators_1 = require("../utils/typeValidators");
+const validators_1 = require("../utils/validators");
 const loginRouter = express_1.default.Router();
-loginRouter.get("/", (0, middleware_1.asyncMiddleware)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = (0, typeValidators_1.toLoginUser)(request.body);
+loginRouter.post("/", (0, middleware_1.asyncMiddleware)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password } = (0, validators_1.toLoginUser)(request.body);
     const user = yield user_1.default.findOne({ username });
     const passwordCorrect = user
         ? yield bcrypt_1.default.compare(password, user.passwordHash)

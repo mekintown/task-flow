@@ -25,7 +25,6 @@ export interface Board extends Document {
 
 export interface NewBoard {
   name: string;
-  owner?: string;
 }
 
 export interface RequestWithToken extends Request {
@@ -36,12 +35,18 @@ export interface OwnerExtractedRequest extends RequestWithToken {
   owner?: string;
 }
 
+export enum Priority {
+  Low = "low",
+  Medium = "medium",
+  High = "high",
+}
+
 export interface Task extends Document {
   id: ObjectId;
   board: ObjectId;
   title: string;
   description?: string;
-  priority?: "Low" | "Medium" | "High";
+  priority?: Priority;
   dueDate?: Date;
 }
 
@@ -49,7 +54,7 @@ export interface NewTask {
   board: ObjectId;
   title: string;
   description?: string;
-  priority?: "Low" | "Medium" | "High";
+  priority?: Priority;
   dueDate?: Date;
 }
 
@@ -62,5 +67,5 @@ export interface BoardCollaborator {
 
 export interface FieldInfo {
   name: string;
-  type: "string" | "number" | "boolean";
+  type: "string" | "number" | "boolean" | "date" | "priority" | "objectId";
 }

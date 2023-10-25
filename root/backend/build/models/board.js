@@ -37,45 +37,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
-const board_1 = __importDefault(require("./board"));
+const task_1 = __importDefault(require("./task"));
 const boardCollaboration_1 = __importDefault(require("./boardCollaboration"));
-const userSchema = new mongoose_1.Schema({
-    username: {
+const boardSchema = new mongoose_1.Schema({
+    name: {
         type: String,
         required: true,
         minLength: 3,
-        unique: true,
     },
-    name: String,
-    passwordHash: {
-        type: String,
+    owner: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
     deletedAt: {
         type: Date,
         default: null,
     },
+}, {
+    timestamps: true,
 });
-userSchema.plugin(mongoose_unique_validator_1.default);
-userSchema.set("toJSON", {
+boardSchema.plugin(mongoose_unique_validator_1.default);
+boardSchema.set("toJSON", {
     transform: (_document, returnedObject) => {
         var _a;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         returnedObject.id = (_a = returnedObject._id) === null || _a === void 0 ? void 0 : _a.toString();
         delete returnedObject._id;
         delete returnedObject.__v;
-        delete returnedObject.passwordHash;
     },
 });
-userSchema.pre("deleteOne", { document: true, query: false }, function (next) {
+boardSchema.pre("deleteOne", { document: true, query: false }, function (next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const boards = yield board_1.default.find({ owner: this._id });
-        for (const board of boards) {
-            yield board.deleteOne();
-        }
-        yield boardCollaboration_1.default.deleteMany({ user: this._id });
+        this.deletedAt = new Date();
+        yield this.save();
+        yield task_1.default.deleteMany({ board: this._id });
+        yield boardCollaboration_1.default.deleteMany({ board: this._id });
         next();
     });
 });
-const User = mongoose_1.default.model("User", userSchema);
-exports.default = User;
+const Board = mongoose_1.default.model("Board", boardSchema);
+exports.default = Board;
