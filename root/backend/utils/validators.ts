@@ -107,10 +107,10 @@ const parseFields = (
       case "date":
         acc[fieldInfo.name] = parseDate(fieldInfo.name, value);
         break;
-      case "priority":
+      case "Priority":
         acc[fieldInfo.name] = parsePriority(fieldInfo.name, value);
         break;
-      case "objectId":
+      case "ObjectId":
         acc[fieldInfo.name] = parseObjectId(fieldInfo.name, value);
         break;
       default:
@@ -172,13 +172,13 @@ export const toNewTask = (object: unknown): NewTask => {
   }
 
   const requiredFields: FieldInfo[] = [
-    { name: "board", type: "objectId" },
+    { name: "board", type: "ObjectId" },
     { name: "title", type: "string" },
   ];
 
   const optionalFields: FieldInfo[] = [
     { name: "description", type: "string" },
-    { name: "priority", type: "priority" },
+    { name: "priority", type: "Priority" },
     { name: "dueDate", type: "date" },
   ];
 

@@ -1,6 +1,14 @@
 import { Request } from "express";
-import { ObjectId } from "mongoose";
+import { Document, ObjectId } from "mongoose";
 
+// Enums
+export enum Priority {
+  Low = "low",
+  Medium = "medium",
+  High = "high",
+}
+
+// User-related interfaces
 export interface User extends Document {
   id: ObjectId;
   username: string;
@@ -10,6 +18,7 @@ export interface User extends Document {
 }
 
 export type NonSensitiveUser = Omit<User, "passwordHash">;
+
 export interface NewUser {
   username: string;
   name: string;
@@ -21,6 +30,7 @@ export interface LoginUser {
   password: string;
 }
 
+// Board-related interfaces
 export interface Board extends Document {
   id: ObjectId;
   name?: string;
@@ -32,20 +42,14 @@ export interface NewBoard {
   name: string;
 }
 
-export interface RequestWithToken extends Request {
-  token?: string;
+export interface BoardCollaborator {
+  id: ObjectId;
+  board: ObjectId;
+  user: ObjectId;
+  dateJoined: Date;
 }
 
-export interface OwnerExtractedRequest extends RequestWithToken {
-  owner?: string;
-}
-
-export enum Priority {
-  Low = "low",
-  Medium = "medium",
-  High = "high",
-}
-
+// Task-related interfaces
 export interface Task extends Document {
   id: ObjectId;
   board: ObjectId;
@@ -63,14 +67,17 @@ export interface NewTask {
   dueDate?: Date;
 }
 
-export interface BoardCollaborator {
-  id: ObjectId;
-  board: ObjectId;
-  user: ObjectId;
-  dateJoined: Date;
+// Request-related interfaces
+export interface RequestWithToken extends Request {
+  token?: string;
 }
 
+export interface OwnerExtractedRequest extends RequestWithToken {
+  owner?: string;
+}
+
+// Miscellaneous
 export interface FieldInfo {
   name: string;
-  type: "string" | "number" | "boolean" | "date" | "priority" | "objectId";
+  type: "string" | "number" | "boolean" | "date" | "Priority" | "ObjectId";
 }
