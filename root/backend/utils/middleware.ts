@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import logger from "./logger";
-import { RequestWithToken } from "../types";
+import { OwnerExtractedRequest, RequestWithToken } from "../types";
+import Board from "../models/board";
 
 const requestLogger = (
   request: Request,
@@ -65,10 +66,25 @@ const errorHandler = (
   }
 };
 
+export const ownerExtractor = async (
+  request: OwnerExtractedRequest,
+  _response: Response,
+  next: NextFunction
+) => {
+  const board = await Board.findById(request.params.id);
+  if (board) {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    request.owner = board.owner.toString();
+  }
+
+  next();
+};
+
 export default {
   requestLogger,
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
   asyncMiddleware,
+  ownerExtractor,
 };

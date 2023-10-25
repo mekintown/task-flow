@@ -1,6 +1,30 @@
-POST http://localhost:3003/api/boards
+POST http://localhost:3003/api/users
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzNjI4Y2UxZDFiN2ZkNDZjMjRiZTEwIiwiaWF0IjoxNjk4MjM2Njg3fQ.aa4-J4mEgPKNej67Qzbc4GMMoPl1OSw4PkERAzDecUg
+
 {
-    "name": "Chula"
+    "username": "memuk",
+    "name": "Muk Muk",
+    "password": "root1234"
 }
+
+###
+GET http://localhost:3003/api/users
+
+###
+POST http://localhost:3003/api/login
+content-type: application/json
+
+{
+    "username": "mekintown",
+    "password": "root1234"
+}
+
+###
+POST http://localhost:3003/api/login
+content-type: application/json
+
+{
+    "username": "memuk",
+    "password": "root1234"
+}
+

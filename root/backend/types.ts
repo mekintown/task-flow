@@ -32,6 +32,10 @@ export interface RequestWithToken extends Request {
   token?: string;
 }
 
+export interface OwnerExtractedRequest extends RequestWithToken {
+  owner?: string;
+}
+
 export interface Task {
   title: string;
   description?: string;

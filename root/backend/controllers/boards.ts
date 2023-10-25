@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import { asyncMiddleware } from "../utils/middleware";
+import { asyncMiddleware, ownerExtractor } from "../utils/middleware";
 import Board from "../models/board";
-import { RequestWithToken } from "../types";
+import { OwnerExtractedRequest, RequestWithToken } from "../types";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import { toNewBoard } from "../utils/typeValidators";
@@ -76,6 +76,37 @@ boardRouter.post(
     );
     response.status(HTTP_STATUS.CREATED).json(savedBoardPopulated);
   })
+);
+
+boardRouter.delete(
+  "/:id",
+  asyncMiddleware(ownerExtractor),
+  asyncMiddleware(
+    async (request: OwnerExtractedRequest, response: Response) => {
+      const decodedToken = jwt.verify(request.token!, process.env.SECRET!) as {
+        id?: string;
+      };
+
+      if (!decodedToken.id) {
+        response
+          .status(HTTP_STATUS.UNAUTHORIZED)
+          .json({ error: "token invalid" });
+        return;
+      }
+
+      console.log(request.owner);
+      console.log(decodedToken);
+
+      if (request.owner !== decodedToken.id) {
+        response
+          .status(HTTP_STATUS.UNAUTHORIZED)
+          .json({ error: "invalid user" });
+        return;
+      }
+      await Board.findByIdAndRemove(request.params.id);
+      response.status(HTTP_STATUS.NO_CONTENT_SUCCESS).end();
+    }
+  )
 );
 
 export default boardRouter;
