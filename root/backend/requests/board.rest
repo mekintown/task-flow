@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/boards
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzNjI4Y2UxZDFiN2ZkNDZjMjRiZTEwIiwiaWF0IjoxNjk4MjM2Njg3fQ.aa4-J4mEgPKNej67Qzbc4GMMoPl1OSw4PkERAzDecUg
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4NTc3fQ.ZjErnmoA37iqt83McVH1rDcdFcjdQ02V6JjO52-0DOY
 
 {
     "name": "Chula"
@@ -12,8 +12,21 @@ GET http://localhost:3003/api/boards
 ###
 POST http://localhost:3003/api/boards
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1lbXVrIiwiaWQiOiI2NTM5MTY5NzY1M2Q4NDNmZTBiMGViZmEiLCJpYXQiOjE2OTgyNDAxNjV9.-TrrmYXAEPIW0WqfN2wU5z1P3Zv8PL27zzMkjd85Lfs
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4NTc3fQ.ZjErnmoA37iqt83McVH1rDcdFcjdQ02V6JjO52-0DOY
 
 ###
-DELETE http://localhost:3003/api/boards/65390c42ed4a497b7f2215cc
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzNjI4Y2UxZDFiN2ZkNDZjMjRiZTEwIiwiaWF0IjoxNjk4MjQwNDkwfQ.x-WsGtXI1LGVpzzQgFlPGCmyKnfIPQPyaFn4SxmdkSE
+DELETE http://localhost:3003/api/boards/65395eb42d7e9a023127aaf7
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1lbXVrIiwiaWQiOiI2NTM5NWUzODJkN2U5YTAyMzEyN2FhZTIiLCJpYXQiOjE2OTgyNTg3MDZ9.wgfd8y43GQFQUa3iLGjfLLZ2No3cnH-pzu3Ipm4gbTw
+
+###
+DELETE http://localhost:3003/api/boards/65395eb42d7e9a023127aaf7
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4Nzg2fQ.KcqiefKIl8DRbNaVjoShuIlOxAHKeimcLpnW0OgJSvk
+
+###
+PUT http://localhost:3003/api/boards/65395f752d7e9a023127ab0f
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4Nzg2fQ.KcqiefKIl8DRbNaVjoShuIlOxAHKeimcLpnW0OgJSvk
+
+{
+    "name": "Yeah"
+}

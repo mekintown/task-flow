@@ -9,17 +9,6 @@ import { HTTP_STATUS } from "../utils/constant";
 
 const boardRouter = express.Router();
 
-boardRouter.get(
-  "/",
-  asyncMiddleware(async (_request: Request, response: Response) => {
-    const boards = await Board.find({}).populate("owner", {
-      username: 1,
-      name: 1,
-    });
-    response.json(boards);
-  })
-);
-
 boardRouter.post(
   "/",
   asyncMiddleware(async (request: RequestWithToken, response: Response) => {
@@ -77,6 +66,17 @@ boardRouter.post(
   })
 );
 
+boardRouter.get(
+  "/",
+  asyncMiddleware(async (_request: Request, response: Response) => {
+    const boards = await Board.find({}).populate("owner", {
+      username: 1,
+      name: 1,
+    });
+    response.json(boards);
+  })
+);
+
 boardRouter.delete(
   "/:id",
   asyncMiddleware(ownerExtractor),
@@ -105,29 +105,47 @@ boardRouter.delete(
   )
 );
 
-// boardRouter.put(
-//   "/:id",
-//   asyncMiddleware(async (request: Request, response: Response) => {
-//     const { name, owner, collaborators, tasks } = request.body;
+boardRouter.put(
+  "/:id",
+  asyncMiddleware(ownerExtractor),
+  asyncMiddleware(
+    async (request: OwnerExtractedRequest, response: Response) => {
+      const decodedToken = jwt.verify(request.token!, process.env.SECRET!) as {
+        id?: string;
+      };
 
-//     const board = {
-//       name,
-//       owner,
-//       collaborators,
-//       tasks,
-//     };
+      if (!decodedToken.id) {
+        response
+          .status(HTTP_STATUS.UNAUTHORIZED)
+          .json({ error: "token invalid" });
+        return;
+      }
 
-//     const updatedBoard = await Board.findByIdAndUpdate(
-//       request.params.id,
-//       board,
-//       {
-//         new: true,
-//         runValidators: true,
-//         context: "query",
-//       }
-//     );
-//     response.json(updatedBoard);
-//   })
-// );
+      const { name } = toNewBoard(request.body);
+
+      if (request.owner !== decodedToken.id) {
+        response
+          .status(HTTP_STATUS.UNAUTHORIZED)
+          .json({ error: "invalid user" });
+        return;
+      }
+
+      const board = {
+        name,
+      };
+
+      const updatedBoard = await Board.findByIdAndUpdate(
+        request.params.id,
+        board,
+        {
+          new: true,
+          runValidators: true,
+          context: "query",
+        }
+      );
+      response.json(updatedBoard);
+    }
+  )
+);
 
 export default boardRouter;

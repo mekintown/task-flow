@@ -25,6 +25,7 @@ export interface Board extends Document {
 
 export interface NewBoard {
   name: string;
+  owner?: string;
 }
 
 export interface RequestWithToken extends Request {
