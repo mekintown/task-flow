@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/user"; // Assuming that User is the default export from the user model
-import { toNewUser } from "../utils/typeValidators";
+import { toNewUser } from "../utils/validators";
 import { asyncMiddleware } from "../utils/middleware";
 import { HTTP_STATUS } from "../utils/constant";
 

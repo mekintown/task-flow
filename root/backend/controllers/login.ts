@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import express, { Request, Response } from "express";
 import User from "../models/user";
 import { asyncMiddleware } from "../utils/middleware";
-import { toLoginUser } from "../utils/typeValidators";
+import { toLoginUser } from "../utils/validators";
 
 const loginRouter = express.Router();
 

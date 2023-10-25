@@ -4,7 +4,7 @@ import Board from "../models/board";
 import { OwnerExtractedRequest, RequestWithToken } from "../types";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
-import { toNewBoard } from "../utils/typeValidators";
+import { toNewBoard } from "../utils/validators";
 import { HTTP_STATUS } from "../utils/constant";
 
 const boardRouter = express.Router();

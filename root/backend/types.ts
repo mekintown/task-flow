@@ -59,3 +59,8 @@ export interface BoardCollaborator {
   user: ObjectId;
   dateJoined: Date;
 }
+
+export interface FieldInfo {
+  name: string;
+  type: "string" | "number" | "boolean";
+}
