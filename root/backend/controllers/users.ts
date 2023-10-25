@@ -3,6 +3,7 @@ import express, { Request, Response, NextFunction } from "express";
 import User from "../models/user"; // Assuming that User is the default export from the user model
 import { toNewUser } from "../utils/typeValidators";
 import { asyncMiddleware } from "../utils/middleware";
+import { HTTP_STATUS } from "../utils/constant";
 
 const usersRouter = express.Router();
 
@@ -34,7 +35,7 @@ usersRouter.post(
 
       const savedUser = await user.save();
 
-      response.status(201).json(savedUser);
+      response.status(HTTP_STATUS.CREATED).json(savedUser);
     }
   )
 );

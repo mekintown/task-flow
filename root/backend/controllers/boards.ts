@@ -5,6 +5,7 @@ import { RequestWithToken } from "../types";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import { toNewBoard } from "../utils/typeValidators";
+import { HTTP_STATUS } from "../utils/constant";
 
 const boardRouter = express.Router();
 
@@ -25,32 +26,46 @@ boardRouter.post(
     const newBoard = toNewBoard(request.body);
 
     if (!request.token) {
-      response.status(401).json({ error: "Token not provided in the request" });
+      response
+        .status(HTTP_STATUS.UNAUTHORIZED)
+        .json({ error: "Token not provided in the request" });
       return;
     }
 
-    if (!process.env.SECRET) {
+    const SECRET = process.env.SECRET;
+
+    if (!SECRET) {
       response
-        .status(401)
+        .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ error: "SECRET environment variable is not set" });
       return;
     }
 
-    const decodedToken = jwt.verify(request.token, process.env.SECRET) as {
+    const decodedToken = jwt.verify(request.token, SECRET) as {
       id?: string;
     };
+
     if (!decodedToken.id) {
-      response.status(401).json({ error: "token invalid" });
+      response
+        .status(HTTP_STATUS.UNAUTHORIZED)
+        .json({ error: "token invalid" });
       return;
     }
 
     const user = await User.findById(decodedToken.id);
 
-    const board = new Board({ ...newBoard, owner: user!._id });
+    if (!user) {
+      response
+        .status(HTTP_STATUS.BAD_REQUEST)
+        .json({ error: "User not found" });
+      return;
+    }
+
+    const board = new Board({ ...newBoard, owner: user._id });
 
     const savedBoard = await board.save();
-    user!.boards = user!.boards.concat([savedBoard.id]);
-    await user!.save();
+    user.boards = user.boards.concat([savedBoard.id]);
+    await user.save();
 
     const savedBoardPopulated = await Board.findById(savedBoard._id).populate(
       "owner",
@@ -59,7 +74,7 @@ boardRouter.post(
         name: 1,
       }
     );
-    response.status(201).json(savedBoardPopulated);
+    response.status(HTTP_STATUS.CREATED).json(savedBoardPopulated);
   })
 );
 
