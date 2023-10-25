@@ -14,12 +14,6 @@ const userSchema = new Schema<User>({
     type: String,
     required: true,
   },
-  boards: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Boards",
-    },
-  ],
 });
 
 userSchema.plugin(uniqueValidator);

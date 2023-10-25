@@ -1,12 +1,11 @@
 import { Request } from "express";
-import { ObjectId, Schema } from "mongoose";
+import { ObjectId } from "mongoose";
 
 export interface User extends Document {
   id: ObjectId;
   username: string;
   name?: string;
   passwordHash: string;
-  boards: Schema.Types.ObjectId[];
 }
 
 export type NonSensitiveUser = Omit<User, "passwordHash">;
@@ -20,8 +19,6 @@ export interface Board extends Document {
   id: ObjectId;
   name?: string;
   owner: ObjectId;
-  tasks: Schema.Types.ObjectId[];
-  collaborators: Schema.Types.ObjectId[];
 }
 
 export interface NewBoard {
@@ -36,10 +33,26 @@ export interface OwnerExtractedRequest extends RequestWithToken {
   owner?: string;
 }
 
-export interface Task {
+export interface Task extends Document {
+  id: ObjectId;
+  board: ObjectId;
   title: string;
   description?: string;
-  priority: "Low" | "Medium" | "High";
-  dueDate: Date;
-  id?: string;
+  priority?: "Low" | "Medium" | "High";
+  dueDate?: Date;
+}
+
+export interface NewTask {
+  board: ObjectId;
+  title: string;
+  description?: string;
+  priority?: "Low" | "Medium" | "High";
+  dueDate?: Date;
+}
+
+export interface BoardCollaborator {
+  id: ObjectId;
+  board: ObjectId;
+  user: ObjectId;
+  dateJoined: Date;
 }

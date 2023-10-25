@@ -8,6 +8,11 @@ const TaskPriority = Object.freeze({
 });
 
 const taskSchema = new Schema({
+  board: {
+    type: Schema.Types.ObjectId,
+    ref: "Board",
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -18,12 +23,10 @@ const taskSchema = new Schema({
   },
   priority: {
     type: String,
-    required: true,
     enum: Object.values(TaskPriority),
   },
   dueDate: {
     type: Date,
-    required: true,
   },
 });
 

@@ -106,4 +106,29 @@ boardRouter.delete(
   )
 );
 
+// boardRouter.put(
+//   "/:id",
+//   asyncMiddleware(async (request: Request, response: Response) => {
+//     const { name, owner, collaborators, tasks } = request.body;
+
+//     const board = {
+//       name,
+//       owner,
+//       collaborators,
+//       tasks,
+//     };
+
+//     const updatedBoard = await Board.findByIdAndUpdate(
+//       request.params.id,
+//       board,
+//       {
+//         new: true,
+//         runValidators: true,
+//         context: "query",
+//       }
+//     );
+//     response.json(updatedBoard);
+//   })
+// );
+
 export default boardRouter;

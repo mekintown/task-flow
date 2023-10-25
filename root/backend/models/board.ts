@@ -11,19 +11,8 @@ const boardSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
-  collaborators: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  tasks: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Task",
-    },
-  ],
 });
 
 boardSchema.plugin(uniqueValidator);
