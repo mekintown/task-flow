@@ -1,7 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import logger from "./logger";
-import { OwnerExtractedRequest, RequestWithToken } from "../types";
+import {
+  AuthorizedRequest,
+  OwnerExtractedRequest,
+  RequestWithToken,
+} from "../types";
 import Board from "../models/board";
+import { HTTP_STATUS } from "./constant";
+import jwt from "jsonwebtoken";
 
 const requestLogger = (
   request: Request,
@@ -80,6 +86,36 @@ export const ownerExtractor = async (
   next();
 };
 
+export const authenticateToken = (
+  req: AuthorizedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.token) {
+    res
+      .status(HTTP_STATUS.UNAUTHORIZED)
+      .json({ error: "Token not provided in the request" });
+    return;
+  }
+
+  const SECRET = process.env.SECRET;
+  if (!SECRET) {
+    res
+      .status(HTTP_STATUS.UNAUTHORIZED)
+      .json({ error: "SECRET environment variable is not set" });
+    return;
+  }
+
+  const decodedToken = jwt.verify(req.token, SECRET) as { id?: string };
+  if (!decodedToken.id) {
+    res.status(HTTP_STATUS.UNAUTHORIZED).json({ error: "token invalid" });
+    return;
+  }
+
+  req.userId = decodedToken.id;
+  next();
+};
+
 export default {
   requestLogger,
   unknownEndpoint,
@@ -87,4 +123,5 @@ export default {
   tokenExtractor,
   asyncMiddleware,
   ownerExtractor,
+  authenticateToken,
 };

@@ -1,8 +1,11 @@
 import express, { Request, Response } from "express";
-import { asyncMiddleware, ownerExtractor } from "../utils/middleware";
+import {
+  asyncMiddleware,
+  authenticateToken,
+  ownerExtractor,
+} from "../utils/middleware";
 import Board from "../models/board";
-import { OwnerExtractedRequest, RequestWithToken } from "../types";
-import jwt from "jsonwebtoken";
+import { AuthorizedRequest, OwnerExtractedRequest } from "../types";
 import User from "../models/user";
 import { toNewBoard } from "../utils/validators";
 import { HTTP_STATUS } from "../utils/constant";
@@ -11,38 +14,9 @@ const boardRouter = express.Router();
 
 boardRouter.post(
   "/",
-  asyncMiddleware(async (request: RequestWithToken, response: Response) => {
-    const newBoard = toNewBoard(request.body);
-
-    if (!request.token) {
-      response
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .json({ error: "Token not provided in the request" });
-      return;
-    }
-
-    const SECRET = process.env.SECRET;
-
-    if (!SECRET) {
-      response
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .json({ error: "SECRET environment variable is not set" });
-      return;
-    }
-
-    const decodedToken = jwt.verify(request.token, SECRET) as {
-      id?: string;
-    };
-
-    if (!decodedToken.id) {
-      response
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .json({ error: "token invalid" });
-      return;
-    }
-
-    const user = await User.findById(decodedToken.id);
-
+  authenticateToken,
+  asyncMiddleware(async (request: AuthorizedRequest, response: Response) => {
+    const user = await User.findById(request.userId);
     if (!user) {
       response
         .status(HTTP_STATUS.BAD_REQUEST)
@@ -50,17 +24,12 @@ boardRouter.post(
       return;
     }
 
-    const board = new Board({ ...newBoard, owner: user._id });
-
+    const board = new Board({ ...toNewBoard(request.body), owner: user._id });
     const savedBoard = await board.save();
-    await user.save();
 
     const savedBoardPopulated = await Board.findById(savedBoard._id).populate(
       "owner",
-      {
-        username: 1,
-        name: 1,
-      }
+      { username: 1, name: 1 }
     );
     response.status(HTTP_STATUS.CREATED).json(savedBoardPopulated);
   })
@@ -79,21 +48,11 @@ boardRouter.get(
 
 boardRouter.delete(
   "/:id",
+  authenticateToken,
   asyncMiddleware(ownerExtractor),
   asyncMiddleware(
     async (request: OwnerExtractedRequest, response: Response) => {
-      const decodedToken = jwt.verify(request.token!, process.env.SECRET!) as {
-        id?: string;
-      };
-
-      if (!decodedToken.id) {
-        response
-          .status(HTTP_STATUS.UNAUTHORIZED)
-          .json({ error: "token invalid" });
-        return;
-      }
-
-      if (request.owner !== decodedToken.id) {
+      if (request.owner !== request.userId) {
         response
           .status(HTTP_STATUS.UNAUTHORIZED)
           .json({ error: "invalid user" });
@@ -107,42 +66,28 @@ boardRouter.delete(
 
 boardRouter.put(
   "/:id",
+  authenticateToken,
   asyncMiddleware(ownerExtractor),
   asyncMiddleware(
     async (request: OwnerExtractedRequest, response: Response) => {
-      const decodedToken = jwt.verify(request.token!, process.env.SECRET!) as {
-        id?: string;
-      };
-
-      if (!decodedToken.id) {
-        response
-          .status(HTTP_STATUS.UNAUTHORIZED)
-          .json({ error: "token invalid" });
-        return;
-      }
-
-      const { name } = toNewBoard(request.body);
-
-      if (request.owner !== decodedToken.id) {
+      if (request.owner !== request.userId) {
         response
           .status(HTTP_STATUS.UNAUTHORIZED)
           .json({ error: "invalid user" });
         return;
       }
 
-      const board = {
-        name,
-      };
-
+      const { name } = toNewBoard(request.body);
       const updatedBoard = await Board.findByIdAndUpdate(
         request.params.id,
-        board,
+        { name },
         {
           new: true,
           runValidators: true,
           context: "query",
         }
       );
+
       response.json(updatedBoard);
     }
   )

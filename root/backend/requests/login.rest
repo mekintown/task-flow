@@ -7,7 +7,7 @@ content-type: application/json
     "password": "root1234"
 }
 
-
+###
 POST http://localhost:3003/api/users
 content-type: application/json
 

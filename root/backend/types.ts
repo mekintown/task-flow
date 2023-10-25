@@ -57,6 +57,7 @@ export interface Task extends Document {
   description?: string;
   priority?: Priority;
   dueDate?: Date;
+  createdBy: ObjectId;
 }
 
 export interface NewTask {
@@ -65,6 +66,7 @@ export interface NewTask {
   description?: string;
   priority?: Priority;
   dueDate?: Date;
+  createdBy: ObjectId;
 }
 
 // Request-related interfaces
@@ -72,7 +74,11 @@ export interface RequestWithToken extends Request {
   token?: string;
 }
 
-export interface OwnerExtractedRequest extends RequestWithToken {
+export interface AuthorizedRequest extends RequestWithToken {
+  userId?: string;
+}
+
+export interface OwnerExtractedRequest extends AuthorizedRequest {
   owner?: string;
 }
 

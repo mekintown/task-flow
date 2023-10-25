@@ -174,6 +174,7 @@ export const toNewTask = (object: unknown): NewTask => {
   const requiredFields: FieldInfo[] = [
     { name: "board", type: "ObjectId" },
     { name: "title", type: "string" },
+    { name: "createdBy", type: "ObjectId" },
   ];
 
   const optionalFields: FieldInfo[] = [
@@ -198,5 +199,6 @@ export const toNewTask = (object: unknown): NewTask => {
     description: parsedFields.description as string | undefined,
     priority: parsedFields.priority as Priority | undefined,
     dueDate: parsedFields.dueDate as Date | undefined,
+    createdBy: parsedFields.createdBy as ObjectId,
   };
 };

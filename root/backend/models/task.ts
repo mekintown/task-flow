@@ -24,6 +24,11 @@ const taskSchema = new Schema<Task>(
     dueDate: {
       type: Date,
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     timestamps: true,
