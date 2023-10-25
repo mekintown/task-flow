@@ -26,6 +26,7 @@ loginRouter.post(
 
     const userForToken = {
       username: user.username,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       id: user._id,
     };
 

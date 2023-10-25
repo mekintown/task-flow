@@ -174,7 +174,6 @@ export const toNewTask = (object: unknown): NewTask => {
   const requiredFields: FieldInfo[] = [
     { name: "board", type: "ObjectId" },
     { name: "title", type: "string" },
-    { name: "createdBy", type: "ObjectId" },
   ];
 
   const optionalFields: FieldInfo[] = [

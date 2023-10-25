@@ -1,45 +1,31 @@
-import express, { Request, Response } from "express";
-import { asyncMiddleware, ownerExtractor } from "../utils/middleware";
-import { OwnerExtractedRequest, RequestWithToken } from "../types";
-import jwt from "jsonwebtoken";
+import express, { Response } from "express";
+import { asyncMiddleware, authenticateToken } from "../utils/middleware";
+import { AuthorizedRequest } from "../types";
 import { HTTP_STATUS } from "../utils/constant";
 import { toNewTask } from "../utils/validators";
 import Task from "../models/task";
+import User from "../models/user";
 
-const boardRouter = express.Router();
+const taskRouter = express.Router();
 
-boardRouter.post(
+taskRouter.post(
   "/",
-  asyncMiddleware(async (request: RequestWithToken, response: Response) => {
+  authenticateToken,
+  asyncMiddleware(async (request: AuthorizedRequest, response: Response) => {
+    const user = await User.findById(request.userId);
+    if (!user) {
+      response
+        .status(HTTP_STATUS.BAD_REQUEST)
+        .json({ error: "User not found" });
+      return;
+    }
     const newTask = toNewTask(request.body);
-    if (!request.token) {
-      response
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .json({ error: "Token not provided in the request" });
-      return;
-    }
-    const SECRET = process.env.SECRET;
-    if (!SECRET) {
-      response
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .json({ error: "SECRET environment variable is not set" });
-      return;
-    }
-    const decodedToken = jwt.verify(request.token, SECRET) as {
-      id?: string;
-    };
-    if (!decodedToken.id) {
-      response
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .json({ error: "token invalid" });
-      return;
-    }
 
-    const task = new Task({ ...newTask });
+    const task = new Task({ ...newTask, createdBy: user._id });
     const savedTask = await task.save();
 
     const savedTaskPopulated = await Task.findById(savedTask._id).populate(
-      "blog",
+      "board",
       {
         owner: 1,
         name: 1,
@@ -48,3 +34,5 @@ boardRouter.post(
     response.status(HTTP_STATUS.CREATED).json(savedTaskPopulated);
   })
 );
+
+export default taskRouter;
