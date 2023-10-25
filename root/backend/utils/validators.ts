@@ -1,5 +1,12 @@
 import { ObjectId } from "mongoose";
-import { FieldInfo, NewBoard, NewTask, NewUser, Priority } from "../types";
+import {
+  FieldInfo,
+  LoginUser,
+  NewBoard,
+  NewTask,
+  NewUser,
+  Priority,
+} from "../types";
 
 const ensureIsObject = (object: unknown): object is Record<string, unknown> => {
   if (!object || typeof object !== "object" || Array.isArray(object)) {
@@ -132,7 +139,7 @@ export const toNewUser = (object: unknown): NewUser => {
   };
 };
 
-export const toLoginUser = (object: unknown): NewUser => {
+export const toLoginUser = (object: unknown): LoginUser => {
   if (!ensureIsObject(object)) {
     throw new Error("Object validation failed");
   }

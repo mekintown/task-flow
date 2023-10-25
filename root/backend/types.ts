@@ -4,7 +4,7 @@ import { ObjectId } from "mongoose";
 export interface User extends Document {
   id: ObjectId;
   username: string;
-  name?: string;
+  name: string;
   passwordHash: string;
   deletedAt: Date | null;
 }
@@ -12,7 +12,12 @@ export interface User extends Document {
 export type NonSensitiveUser = Omit<User, "passwordHash">;
 export interface NewUser {
   username: string;
-  name?: string;
+  name: string;
+  password: string;
+}
+
+export interface LoginUser {
+  username: string;
   password: string;
 }
 
