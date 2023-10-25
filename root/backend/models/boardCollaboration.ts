@@ -5,14 +5,17 @@ const BoardCollaboratorSchema = new Schema<BoardCollaborator>({
   board: {
     type: Schema.Types.ObjectId,
     ref: "Board",
+    required: true,
   },
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   dateJoined: {
     type: Date,
     default: Date.now,
+    required: true,
   },
 });
 
