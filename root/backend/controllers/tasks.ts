@@ -67,8 +67,7 @@ taskRouter.get(
     }
 
     // Check if the board's owner is not the same as the user making the request
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
-    if (board.owner.toString() !== user._id.toString()) {
+    if (JSON.stringify(board.owner) !== JSON.stringify(user._id)) {
       response
         .status(HTTP_STATUS.FORBIDDEN)
         .json({ error: "You are not authorized to view tasks for this board" });
@@ -81,6 +80,27 @@ taskRouter.get(
     });
 
     response.json(tasks);
+  })
+);
+
+taskRouter.delete(
+  "/:id",
+  authenticateToken,
+  asyncMiddleware(async (request: AuthorizedRequest, response: Response) => {
+    const task = await Task.findById(request.params.id);
+    if (!task) {
+      response
+        .status(HTTP_STATUS.BAD_REQUEST)
+        .json({ error: "Task not found" });
+      return;
+    }
+
+    if (JSON.stringify(task.createdBy) !== request.userId) {
+      response.status(HTTP_STATUS.UNAUTHORIZED).json({ error: "invalid user" });
+      return;
+    }
+    await Board.findByIdAndRemove(request.params.id);
+    response.status(HTTP_STATUS.NO_CONTENT).end();
   })
 );
 

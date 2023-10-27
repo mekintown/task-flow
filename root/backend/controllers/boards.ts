@@ -59,7 +59,7 @@ boardRouter.delete(
         return;
       }
       await Board.findByIdAndRemove(request.params.id);
-      response.status(HTTP_STATUS.NO_CONTENT_SUCCESS).end();
+      response.status(HTTP_STATUS.NO_CONTENT).end();
     }
   )
 );
