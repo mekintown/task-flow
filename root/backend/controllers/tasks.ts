@@ -1,4 +1,4 @@
-import express, { Response } from "express";
+import express, { Request, Response } from "express";
 import { asyncMiddleware, authenticateToken } from "../utils/middleware";
 import { AuthorizedRequest } from "../types";
 import { HTTP_STATUS } from "../utils/constant";
@@ -31,6 +31,17 @@ taskRouter.post(
       }
     );
     response.status(HTTP_STATUS.CREATED).json(savedTaskPopulated);
+  })
+);
+
+taskRouter.get(
+  "/",
+  asyncMiddleware(async (request: AuthorizedRequest, response: Response) => {
+    const tasks = await Task.find({}).populate("createdBy", {
+      username: 1,
+      name: 1,
+    });
+    response.json(tasks);
   })
 );
 
