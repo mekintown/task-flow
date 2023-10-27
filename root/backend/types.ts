@@ -10,7 +10,8 @@ export enum Priority {
 
 // User-related interfaces
 export interface User extends Document {
-  id: ObjectId;
+  _id: ObjectId;
+  id: string;
   username: string;
   name: string;
   passwordHash: string;
@@ -32,7 +33,8 @@ export interface LoginUser {
 
 // Board-related interfaces
 export interface Board extends Document {
-  id: ObjectId;
+  _id: ObjectId;
+  id: string;
   name?: string;
   owner: ObjectId;
   deletedAt: Date | null;
@@ -43,7 +45,7 @@ export interface NewBoard {
 }
 
 export interface BoardCollaborator {
-  id: ObjectId;
+  id: string;
   board: ObjectId;
   user: ObjectId;
   dateJoined: Date;
@@ -51,7 +53,8 @@ export interface BoardCollaborator {
 
 // Task-related interfaces
 export interface Task extends Document {
-  id: ObjectId;
+  _id: ObjectId;
+  id: string;
   board: ObjectId;
   title: string;
   description?: string;

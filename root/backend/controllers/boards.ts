@@ -24,7 +24,6 @@ boardRouter.post(
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const board = new Board({ ...toNewBoard(request.body), owner: user._id });
     const savedBoard = await board.save();
 

@@ -20,7 +20,6 @@ taskRouter.post(
       return;
     }
     const newTask = toNewTask(request.body);
-
     const task = new Task({ ...newTask, createdBy: user._id });
     const savedTask = await task.save();
 
