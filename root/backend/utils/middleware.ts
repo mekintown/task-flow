@@ -79,7 +79,8 @@ export const ownerExtractor = async (
 ) => {
   const board = await Board.findById(request.params.id);
   if (board) {
-    request.owner = JSON.stringify(board.owner);
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+    request.owner = board.owner.toString();
   }
 
   next();
