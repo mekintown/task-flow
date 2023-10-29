@@ -4,6 +4,7 @@ import User from "../models/user"; // Assuming that User is the default export f
 import { toNewUser } from "../utils/validators";
 import { asyncMiddleware } from "../utils/middleware";
 import { HTTP_STATUS } from "../utils/constant";
+import config from "../utils/config";
 
 const usersRouter = express.Router();
 
@@ -28,8 +29,7 @@ usersRouter.post(
         return;
       }
 
-      const saltRounds = 10;
-      const passwordHash = await bcrypt.hash(password, saltRounds);
+      const passwordHash = await bcrypt.hash(password, config.SALT_ROUNDS);
 
       const user = new User({ username, name, passwordHash });
 

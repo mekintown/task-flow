@@ -44,11 +44,17 @@ export interface NewBoard {
   name: string;
 }
 
-export interface BoardCollaborator {
+// BoardCollaborator-related interfaces
+export interface BoardCollaborator extends Document {
+  _id: ObjectId;
   id: string;
   board: ObjectId;
   user: ObjectId;
   dateJoined: Date;
+}
+
+export interface NewBoardCollaborator {
+  username: string;
 }
 
 // Task-related interfaces

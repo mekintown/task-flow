@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 import { Board } from "../types";
 import Task from "./task";
-import boardCollaborator from "./boardCollaboration";
+import boardCollaborator from "./boardCollaborator";
 
 const boardSchema = new Schema<Board>(
   {

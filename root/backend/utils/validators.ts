@@ -3,6 +3,7 @@ import {
   FieldInfo,
   LoginUser,
   NewBoard,
+  NewBoardCollaborator,
   NewTask,
   NewUser,
   Priority,
@@ -199,5 +200,18 @@ export const toNewTask = (object: unknown): NewTask => {
     priority: parsedFields.priority as Priority | undefined,
     dueDate: parsedFields.dueDate as Date | undefined,
     createdBy: parsedFields.createdBy as ObjectId,
+  };
+};
+
+export const toNewBoardCollaborator = (
+  object: unknown
+): NewBoardCollaborator => {
+  if (!ensureIsObject(object)) {
+    throw new Error("Object validation failed");
+  }
+  const requiredFields: FieldInfo[] = [{ name: "username", type: "string" }];
+  const parsedFields = parseFields(object, requiredFields);
+  return {
+    username: parsedFields.name as string,
   };
 };

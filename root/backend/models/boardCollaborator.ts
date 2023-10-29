@@ -30,9 +30,9 @@ BoardCollaboratorSchema.set("toJSON", {
 
 BoardCollaboratorSchema.index({ board: 1, user: 1 }, { unique: true });
 
-const boardCollaborator = mongoose.model<BoardCollaborator>(
+const BoardCollaborator = mongoose.model<BoardCollaborator>(
   "BoardCollaborator",
   BoardCollaboratorSchema
 );
 
-export default boardCollaborator;
+export default BoardCollaborator;
