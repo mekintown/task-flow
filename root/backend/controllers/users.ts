@@ -5,6 +5,7 @@ import { toNewUser } from "../utils/validators";
 import { asyncMiddleware } from "../utils/middleware";
 import { HTTP_STATUS } from "../utils/constant";
 import config from "../utils/config";
+import validator from "validator";
 
 const usersRouter = express.Router();
 
@@ -22,8 +23,27 @@ usersRouter.post(
     async (request: Request, response: Response, next: NextFunction) => {
       const { username, name, password } = toNewUser(request.body);
 
-      if (!password || password.length < 3) {
-        const error = new Error("Password must be at least 3 characters long.");
+      if (
+        !password ||
+        password.length < 8 ||
+        !validator.isStrongPassword(password, {
+          minLength: 8,
+          minLowercase: 1,
+          minUppercase: 1,
+          minNumbers: 2,
+          minSymbols: 1,
+          returnScore: false,
+          pointsPerUnique: 1,
+          pointsPerRepeat: 0.5,
+          pointsForContainingLower: 10,
+          pointsForContainingUpper: 10,
+          pointsForContainingNumber: 10,
+          pointsForContainingSymbol: 10,
+        })
+      ) {
+        const error = new Error(
+          "Password does not meet strength requirements. It must have at least 8 characters, include uppercase, lowercase, at least 2 numbers, and a symbol."
+        );
         error.name = "ValidationError";
         next(error);
         return;
