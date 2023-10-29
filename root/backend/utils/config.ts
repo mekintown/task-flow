@@ -9,4 +9,5 @@ const MONGODB_URI =
     : process.env.MONGODB_URI;
 
 const SALT_ROUNDS = 10;
+
 export default { PORT, MONGODB_URI, SALT_ROUNDS };
