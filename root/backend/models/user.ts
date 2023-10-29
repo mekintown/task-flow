@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 import { User } from "../types";
-import Board from "./board";
-import boardCollaborator from "./boardCollaborator";
+// import Board from "./board";
+// import boardCollaborator from "./boardCollaborator";
 
 const userSchema = new Schema<User>({
   username: {
@@ -37,20 +37,20 @@ userSchema.set("toJSON", {
   },
 });
 
-userSchema.pre(
-  "deleteOne",
-  { document: true, query: false },
-  async function (next) {
-    const boards = await Board.find({ owner: this._id });
-    for (const board of boards) {
-      await board.deleteOne();
-    }
+// userSchema.pre(
+//   "deleteOne",
+//   { document: true, query: false },
+//   async function (next) {
+//     const boards = await Board.find({ owner: this._id });
+//     for (const board of boards) {
+//       await board.deleteOne();
+//     }
 
-    await boardCollaborator.deleteMany({ user: this._id });
+//     await boardCollaborator.deleteMany({ user: this._id });
 
-    next();
-  }
-);
+//     next();
+//   }
+// );
 
 const User = mongoose.model<User>("User", userSchema);
 

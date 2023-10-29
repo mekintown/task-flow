@@ -8,10 +8,11 @@ import {
   NewUser,
   Priority,
 } from "../types";
+import ValidationError from "../errors/ValidationError";
 
 const ensureIsObject = (object: unknown): object is Record<string, unknown> => {
   if (!object || typeof object !== "object" || Array.isArray(object)) {
-    throw new Error("Provided data is not an object");
+    throw new ValidationError("Provided data is not an object");
   }
   return true;
 };
@@ -22,7 +23,7 @@ const isString = (text: unknown): text is string => {
 
 const parseString = (fieldName: string, value: unknown): string => {
   if (!isString(value)) {
-    throw new Error(`Incorrect or missing ${fieldName}: ${value}`);
+    throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
 };
@@ -33,7 +34,7 @@ const isNumber = (value: unknown): value is number => {
 
 const parseNumber = (fieldName: string, value: unknown): number => {
   if (!isNumber(value)) {
-    throw new Error(`Incorrect or missing ${fieldName}: ${value}`);
+    throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
 };
@@ -44,7 +45,7 @@ const isBoolean = (value: unknown): value is boolean => {
 
 const parseBoolean = (fieldName: string, value: unknown): boolean => {
   if (!isBoolean(value)) {
-    throw new Error(`Incorrect or missing ${fieldName}: ${value}`);
+    throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
 };
@@ -55,7 +56,7 @@ const isDate = (date: string): boolean => {
 
 const parseDate = (fieldName: string, value: unknown): string => {
   if (!isString(value) || !isDate(value)) {
-    throw new Error(`Incorrect or missing ${fieldName}: ${value}`);
+    throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
 };
@@ -68,7 +69,7 @@ const isPriority = (param: string): param is Priority => {
 
 const parsePriority = (fieldName: string, value: unknown): Priority => {
   if (!isString(value) || !isPriority(value)) {
-    throw new Error(`Incorrect or missing ${fieldName}: ${value}`);
+    throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
 };
@@ -80,7 +81,7 @@ const isObjectId = (id: unknown): id is ObjectId => {
 
 const parseObjectId = (fieldName: string, value: unknown): ObjectId => {
   if (!isObjectId(value)) {
-    throw new Error(`Incorrect or missing ${fieldName}: ${value}`);
+    throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
 };
@@ -92,7 +93,7 @@ const parseFields = (
   return fields.reduce((acc, fieldInfo) => {
     const value = object[fieldInfo.name];
     if (!(fieldInfo.name in object)) {
-      throw new Error(`Field missing: ${fieldInfo.name}`);
+      throw new ValidationError(`Field missing: ${fieldInfo.name}`);
     }
 
     switch (fieldInfo.type) {
@@ -115,7 +116,7 @@ const parseFields = (
         acc[fieldInfo.name] = parseObjectId(fieldInfo.name, value);
         break;
       default:
-        throw new Error(`Unknown field type for ${fieldInfo.name}`);
+        throw new ValidationError(`Unknown field type for ${fieldInfo.name}`);
     }
 
     return acc;
@@ -124,7 +125,7 @@ const parseFields = (
 
 export const toNewUser = (object: unknown): NewUser => {
   if (!ensureIsObject(object)) {
-    throw new Error("Object validation failed");
+    throw new ValidationError("Object validation failed");
   }
   const requiredFields: FieldInfo[] = [
     { name: "username", type: "string" },
@@ -142,7 +143,7 @@ export const toNewUser = (object: unknown): NewUser => {
 
 export const toLoginUser = (object: unknown): LoginUser => {
   if (!ensureIsObject(object)) {
-    throw new Error("Object validation failed");
+    throw new ValidationError("Object validation failed");
   }
 
   const requiredFields: FieldInfo[] = [
@@ -158,7 +159,7 @@ export const toLoginUser = (object: unknown): LoginUser => {
 
 export const toNewBoard = (object: unknown): NewBoard => {
   if (!ensureIsObject(object)) {
-    throw new Error("Object validation failed");
+    throw new ValidationError("Object validation failed");
   }
   const requiredFields: FieldInfo[] = [{ name: "name", type: "string" }];
   const parsedFields = parseFields(object, requiredFields);
@@ -169,7 +170,7 @@ export const toNewBoard = (object: unknown): NewBoard => {
 
 export const toNewTask = (object: unknown): NewTask => {
   if (!ensureIsObject(object)) {
-    throw new Error("Object validation failed");
+    throw new ValidationError("Object validation failed");
   }
 
   const requiredFields: FieldInfo[] = [
@@ -207,7 +208,7 @@ export const toNewBoardCollaborator = (
   object: unknown
 ): NewBoardCollaborator => {
   if (!ensureIsObject(object)) {
-    throw new Error("Object validation failed");
+    throw new ValidationError("Object validation failed");
   }
   const requiredFields: FieldInfo[] = [{ name: "username", type: "string" }];
   const parsedFields = parseFields(object, requiredFields);

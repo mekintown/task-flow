@@ -22,16 +22,14 @@ usersRouter.post(
   asyncMiddleware(
     async (request: Request, response: Response, next: NextFunction) => {
       const { username, name, password } = toNewUser(request.body);
-
       if (
         !password ||
-        password.length < 8 ||
         !validator.isStrongPassword(password, {
           minLength: 8,
           minLowercase: 1,
           minUppercase: 1,
-          minNumbers: 2,
-          minSymbols: 1,
+          minSymbols: 0,
+          minNumbers: 1,
           returnScore: false,
           pointsPerUnique: 1,
           pointsPerRepeat: 0.5,
@@ -42,7 +40,7 @@ usersRouter.post(
         })
       ) {
         const error = new Error(
-          "Password does not meet strength requirements. It must have at least 8 characters, include uppercase, lowercase, at least 2 numbers, and a symbol."
+          "Password does not meet strength requirements. It must have at least 8 characters, include uppercase, lowercase and at least 1 numbers."
         );
         error.name = "ValidationError";
         next(error);

@@ -4,7 +4,7 @@ content-type: application/json
 {
     "username": "mekintown",
     "name": "Maekin Namwong",
-    "password": "root1234"
+    "password": "Testpassword1"
 }
 
 ###
@@ -13,7 +13,6 @@ content-type: application/json
 
 {
     "username": "memuk",
-    "name": "Muk Muk",
     "password": "root1234"
 }
 

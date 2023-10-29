@@ -57,18 +57,23 @@ const errorHandler = (
   error: Error,
   _request: Request,
   response: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   logger.error(error.message);
 
-  if (error.name === "CastError") {
-    response.status(400).send({ error: "malformatted id" });
-  } else if (error.name === "ValidationError") {
-    response.status(400).json({ error: error.message });
-  } else if (error.name === "JsonWebTokenError") {
-    response.status(400).json({ error: error.message });
-  } else {
-    next(error);
+  switch (error.name) {
+    case "CastError":
+      response.status(400).send({ error: "malformatted id" });
+      break;
+    case "ValidationError":
+      response.status(400).json({ error: error.message });
+      break;
+    case "JsonWebTokenError":
+      response.status(401).json({ error: "Unauthorized" });
+      break;
+    default:
+      // If none of the above, it's an unknown error
+      response.status(500).json({ error: "Internal server error" });
   }
 };
 

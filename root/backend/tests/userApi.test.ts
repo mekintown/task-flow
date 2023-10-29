@@ -2,12 +2,14 @@ import mongoose from "mongoose";
 import supertest from "supertest";
 import app from "../app";
 import User from "../models/user";
+import Board from "../models/board";
 
 const api = supertest(app);
 
 beforeEach(async () => {
   // Clear users collection before each test
   await User.deleteMany({});
+  await Board.deleteMany({});
 });
 
 describe("Users API", () => {
@@ -22,7 +24,7 @@ describe("Users API", () => {
     const newUser = {
       username: "testuser",
       name: "Test User",
-      password: "testpassword",
+      password: "Testpassword1",
     };
 
     await api
@@ -44,17 +46,73 @@ describe("Validation Tests", () => {
     const user = {
       username: "testuser",
       name: "Test User",
-      password: "testpassword",
+      password: "Testpassword1",
     };
 
     await api.post("/api/users").send(user);
 
     const result = await api.post("/api/users").send(user);
 
-    expect(result.status).toBe(400); // Assuming 400 for validation errors
+    expect(result.status).toBe(400);
   });
 
-  // ... other validation tests
+  test("adding a user with a password less than 8 characters", async () => {
+    const result = await api.post("/api/users").send({
+      username: "testuser",
+      name: "Test User",
+      password: "Test1",
+    });
+
+    expect(result.status).toBe(400);
+  });
+
+  test("adding a user with a password without uppercase characters", async () => {
+    const result = await api.post("/api/users").send({
+      username: "testuser",
+      name: "Test User",
+      password: "testpassword1",
+    });
+
+    expect(result.status).toBe(400);
+  });
+
+  test("adding a user with a password without lowercase characters", async () => {
+    const result = await api.post("/api/users").send({
+      username: "testuser",
+      name: "Test User",
+      password: "TESTPASSWORD1",
+    });
+
+    expect(result.status).toBe(400);
+  });
+
+  test("adding a user with a password without numbers", async () => {
+    const result = await api.post("/api/users").send({
+      username: "testuser",
+      name: "Test User",
+      password: "TestPassword",
+    });
+
+    expect(result.status).toBe(400);
+  });
+
+  test("adding a user without a password", async () => {
+    const result = await api.post("/api/users").send({
+      username: "testuser",
+      name: "Test User",
+    });
+
+    expect(result.status).toBe(400);
+  });
+
+  test("adding a user without a username", async () => {
+    const result = await api.post("/api/users").send({
+      name: "Test User",
+      password: "Testpassword1",
+    });
+
+    expect(result.status).toBe(400);
+  });
 });
 
 describe("JSON Transformation Tests", () => {
@@ -62,7 +120,7 @@ describe("JSON Transformation Tests", () => {
     const newUser = {
       username: "testuser2",
       name: "Test User 2",
-      password: "testpassword2",
+      password: "Testpassword1",
     };
 
     const result = await api.post("/api/users").send(newUser);
@@ -73,6 +131,33 @@ describe("JSON Transformation Tests", () => {
     expect(result.body.__v).toBeUndefined();
   });
 });
+
+// describe("Deletion Tests", () => {
+//   test("deleting a user also deletes their boards", async () => {
+//     const user = {
+//       username: "testuser",
+//       name: "Test User",
+//       password: "Testpassword1",
+//     };
+
+//     // Create a user
+//     const savedUser = await api.post("/api/users").send(user);
+
+//     // Create a board for that user
+//     await api.post("/api/boards").send({
+//       title: "Test Board",
+//     });
+
+//     // Delete the user
+//     await api.delete(`/api/users/${savedUser.body.id}`);
+
+//     // Check that the board for that user no longer exists
+//     const boardsAfterDeletion = await api.get("/api/boards");
+//     expect(boardsAfterDeletion.body).toHaveLength(0);
+//   });
+
+//   // once the logic for board collaborators is available.
+// });
 
 afterAll(async () => {
   await mongoose.connection.close();
