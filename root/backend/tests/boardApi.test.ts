@@ -3,42 +3,10 @@ import mongoose from "mongoose";
 import app from "../app";
 import Board from "../models/board";
 import User from "../models/user";
-import {
-  BoardCollaboration,
-  Board as BoardType,
-  NewBoard,
-  Role,
-} from "../types";
+import { BoardCollaboration, Role } from "../types";
+import testHelper from "./testHelper";
 
 const api = supertest(app);
-
-const createUserAndLogin = async (
-  username: string = "testuser",
-  name: string = "Test User",
-  password: string = "Testpassword1"
-) => {
-  const user = {
-    username,
-    name,
-    password,
-  };
-
-  await api.post("/api/users").send(user);
-  const response = await api.post("/api/login").send({
-    username: user.username,
-    password: user.password,
-  });
-
-  return response.body.token as string;
-};
-
-const createBoard = async (authToken: string, boardData: NewBoard) => {
-  const response = await api
-    .post("/api/boards")
-    .set("Authorization", `Bearer ${authToken}`)
-    .send(boardData);
-  return response.body as BoardType;
-};
 
 describe("Board API", () => {
   let authToken: string;
@@ -47,7 +15,7 @@ describe("Board API", () => {
   beforeEach(async () => {
     await User.deleteMany({});
     await Board.deleteMany({});
-    authToken = await createUserAndLogin();
+    authToken = await testHelper.createUserAndLogin();
 
     // Get user ID for testing user boards
     const userResponse = await api
@@ -75,8 +43,8 @@ describe("Board API", () => {
   });
 
   test("should retrieve all boards", async () => {
-    await createBoard(authToken, { name: "Board 1" });
-    await createBoard(authToken, { name: "Board 2" });
+    await testHelper.createBoard(authToken, { name: "Board 1" });
+    await testHelper.createBoard(authToken, { name: "Board 2" });
 
     const response = await api
       .get("/api/boards")
@@ -88,7 +56,9 @@ describe("Board API", () => {
   });
 
   test("should retrieve a specific board by ID", async () => {
-    const board = await createBoard(authToken, { name: "Specific Board" });
+    const board = await testHelper.createBoard(authToken, {
+      name: "Specific Board",
+    });
     const boardId = board.id;
 
     const response = await api
@@ -101,7 +71,9 @@ describe("Board API", () => {
   });
 
   test("should update a board by owner", async () => {
-    const board = await createBoard(authToken, { name: "Test Board" });
+    const board = await testHelper.createBoard(authToken, {
+      name: "Test Board",
+    });
 
     const updatedBoardData = {
       name: "Updated Board Name",
@@ -121,7 +93,9 @@ describe("Board API", () => {
   });
 
   test("should delete a board", async () => {
-    const board = await createBoard(authToken, { name: "Test Board" });
+    const board = await testHelper.createBoard(authToken, {
+      name: "Test Board",
+    });
 
     await api
       .delete(`/api/boards/${board.id}`)
@@ -166,7 +140,7 @@ describe("Board API", () => {
 
   test("board collaborators should be updated when a board is updated", async () => {
     // Create a second user to add as a collaborator
-    const secondUserToken = await createUserAndLogin(
+    const secondUserToken = await testHelper.createUserAndLogin(
       "seconduser",
       "Second User",
       "SecondPassword1"
@@ -177,7 +151,7 @@ describe("Board API", () => {
 
     const secondUserId = secondUserResponse.body.id as string;
 
-    const board = await createBoard(authToken, {
+    const board = await testHelper.createBoard(authToken, {
       name: "Collaborator Test Board",
     });
 
@@ -201,7 +175,9 @@ describe("Board API", () => {
   });
 
   test("user boards should be updated when a board is deleted", async () => {
-    const board = await createBoard(authToken, { name: "Delete Test Board" });
+    const board = await testHelper.createBoard(authToken, {
+      name: "Delete Test Board",
+    });
 
     await api
       .delete(`/api/boards/${board.id}`)
