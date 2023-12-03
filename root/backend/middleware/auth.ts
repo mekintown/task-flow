@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { ProtectRequest } from "../types";
+import { AuthorizeRequest, ProtectRequest } from "../types";
 import { HTTP_STATUS } from "../utils/constant";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
@@ -50,12 +50,12 @@ export const protect = async (
 export const authorize = (
   ...roles: string[]
 ): ((
-  req: ProtectRequest,
+  req: AuthorizeRequest,
   res: Response,
   next: NextFunction
 ) => Promise<void>) => {
-  return async (req: ProtectRequest, res: Response, next: NextFunction) => {
-    const boardId = req.params.id;
+  return async (req: AuthorizeRequest, res: Response, next: NextFunction) => {
+    const boardId = req.params.boardId;
     if (!boardId) {
       res
         .status(HTTP_STATUS.BAD_REQUEST)
@@ -92,6 +92,7 @@ export const authorize = (
       return;
     }
 
+    req.board = board;
     next();
   };
 };

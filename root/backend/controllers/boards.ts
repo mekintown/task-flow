@@ -49,9 +49,9 @@ boardRouter.get(
 );
 
 boardRouter.get(
-  "/:id",
+  "/:boardId",
   asyncHandler(async (request: Request, response: Response) => {
-    const board = await Board.findById(request.params.id)
+    const board = await Board.findById(request.params.boardId)
       .populate("tasks")
       .populate("collaborators.userId");
     if (!board) {
@@ -63,23 +63,23 @@ boardRouter.get(
 );
 
 boardRouter.delete(
-  "/:id",
+  "/:boardId",
   asyncHandler(protect),
   asyncHandler(authorize("Owner")),
   asyncHandler(async (request: ProtectRequest, response: Response) => {
-    await Board.findByIdAndRemove(request.params.id);
+    await Board.findByIdAndRemove(request.params.boardId);
     response.status(HTTP_STATUS.NO_CONTENT).end();
   })
 );
 
 boardRouter.put(
-  "/:id",
+  "/:boardId",
   asyncHandler(protect),
   asyncHandler(authorize("Owner")),
   asyncHandler(async (request: ProtectRequest, response: Response) => {
     const { name } = toNewBoard(request.body);
     const updatedBoard = await Board.findByIdAndUpdate(
-      request.params.id,
+      request.params.boardId,
       { name },
       {
         new: true,

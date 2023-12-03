@@ -59,7 +59,6 @@ export interface NewBoard {
 export interface Task extends Document {
   _id: ObjectId;
   id: string;
-  board: ObjectId;
   title: string;
   description?: string;
   priority?: Priority;
@@ -68,7 +67,6 @@ export interface Task extends Document {
 }
 
 export interface NewTask {
-  board: ObjectId;
   title: string;
   description?: string;
   priority?: Priority;
@@ -80,6 +78,10 @@ export interface NewTask {
 
 export interface ProtectRequest extends Request {
   user: User;
+}
+
+export interface AuthorizeRequest extends ProtectRequest {
+  board: Board;
 }
 
 export interface OwnerExtractedRequest extends ProtectRequest {

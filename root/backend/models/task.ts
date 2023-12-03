@@ -3,11 +3,6 @@ import { Priority, Task } from "../types";
 
 const taskSchema = new Schema<Task>(
   {
-    board: {
-      type: Schema.Types.ObjectId,
-      ref: "Board",
-      required: true,
-    },
     title: {
       type: String,
       required: true,

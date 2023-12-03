@@ -162,9 +162,8 @@ export const toNewTask = (object: unknown): NewTask => {
     throw new ValidationError("Object validation failed");
   }
 
-  if ("board" in object && "title" in object && "createdBy" in object) {
+  if ("title" in object && "createdBy" in object) {
     const newTask: NewTask = {
-      board: parseObjectId("board", object.board),
       title: parseString("title", object.title),
       createdBy: parseObjectId("createdBy", object.createdBy),
     };
