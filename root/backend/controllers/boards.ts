@@ -104,7 +104,7 @@ boardRouter.get(
 boardRouter.delete(
   "/:boardId",
   asyncHandler(protect),
-  asyncHandler(authorize("Owner")),
+  asyncHandler(authorize(Role.Owner)),
   asyncHandler(async (request: ProtectRequest, response: Response) => {
     const boardId = request.params.boardId;
     const board = await Board.findById(boardId);
@@ -124,7 +124,7 @@ boardRouter.delete(
 boardRouter.put(
   "/:boardId",
   asyncHandler(protect),
-  asyncHandler(authorize("Owner")),
+  asyncHandler(authorize(Role.Owner)),
   asyncHandler(async (request: ProtectRequest, response: Response) => {
     const boardId = request.params.boardId;
     const { name, collaborators } = toNewBoard(request.body);
