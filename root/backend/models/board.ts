@@ -1,8 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
-import uniqueValidator from "mongoose-unique-validator";
-import { Board } from "../types";
+import { Board, Role } from "../types";
 import Task from "./task";
-import boardCollaborator from "./boardCollaborator";
 
 const boardSchema = new Schema<Board>(
   {
@@ -11,22 +9,31 @@ const boardSchema = new Schema<Board>(
       required: true,
       minLength: 3,
     },
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    deletedAt: {
-      type: Date,
-      default: null,
-    },
+    collaborators: [
+      {
+        userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        role: {
+          type: String,
+          enum: Object.values(Role),
+          required: true,
+        },
+      },
+    ],
+    tasks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Task",
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-boardSchema.plugin(uniqueValidator);
+Object.assign(boardSchema.statics, {
+  Role,
+});
 
 boardSchema.set("toJSON", {
   transform: (_document: Document, returnedObject) => {
@@ -41,11 +48,7 @@ boardSchema.pre(
   "deleteOne",
   { document: true, query: false },
   async function (next) {
-    this.deletedAt = new Date();
-    await this.save();
-
     await Task.deleteMany({ board: this._id });
-    await boardCollaborator.deleteMany({ board: this._id });
 
     next();
   }

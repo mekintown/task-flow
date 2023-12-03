@@ -3,9 +3,15 @@ import { Document, ObjectId } from "mongoose";
 
 // Enums
 export enum Priority {
-  Low = "low",
-  Medium = "medium",
-  High = "high",
+  Low = "Low",
+  Medium = "Medium",
+  High = "High",
+}
+
+export enum Role {
+  Owner = "Owner",
+  Editor = "Editor",
+  Visitor = "Visitor",
 }
 
 // User-related interfaces
@@ -15,7 +21,6 @@ export interface User extends Document {
   username: string;
   name: string;
   passwordHash: string;
-  deletedAt: Date | null;
 }
 
 export type NonSensitiveUser = Omit<User, "passwordHash">;
@@ -32,29 +37,22 @@ export interface LoginUser {
 }
 
 // Board-related interfaces
+export interface Collaborator {
+  userId: ObjectId;
+  role: Role;
+}
+
 export interface Board extends Document {
   _id: ObjectId;
   id: string;
-  name?: string;
-  owner: ObjectId;
-  deletedAt: Date | null;
+  name: string;
+  collaborators: Collaborator[];
+  tasks?: Task[];
 }
 
 export interface NewBoard {
   name: string;
-}
-
-// BoardCollaborator-related interfaces
-export interface BoardCollaborator extends Document {
-  _id: ObjectId;
-  id: string;
-  board: ObjectId;
-  user: ObjectId;
-  dateJoined: Date;
-}
-
-export interface NewBoardCollaborator {
-  username: string;
+  collaborators?: Collaborator[];
 }
 
 // Task-related interfaces
@@ -65,7 +63,7 @@ export interface Task extends Document {
   title: string;
   description?: string;
   priority?: Priority;
-  dueDate?: Date;
+  dueDate?: string;
   createdBy: ObjectId;
 }
 
@@ -74,25 +72,16 @@ export interface NewTask {
   title: string;
   description?: string;
   priority?: Priority;
-  dueDate?: Date;
+  dueDate?: string;
   createdBy: ObjectId;
 }
 
 // Request-related interfaces
-export interface RequestWithToken extends Request {
-  token?: string;
+
+export interface ProtectRequest extends Request {
+  user: User;
 }
 
-export interface AuthorizedRequest extends RequestWithToken {
-  userId?: string;
-}
-
-export interface OwnerExtractedRequest extends AuthorizedRequest {
+export interface OwnerExtractedRequest extends ProtectRequest {
   owner?: string;
-}
-
-// Miscellaneous
-export interface FieldInfo {
-  name: string;
-  type: "string" | "number" | "boolean" | "date" | "Priority" | "ObjectId";
 }

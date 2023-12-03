@@ -1,17 +1,17 @@
 import { ObjectId } from "mongoose";
 import {
-  FieldInfo,
+  Collaborator,
   LoginUser,
   NewBoard,
-  NewBoardCollaborator,
   NewTask,
   NewUser,
   Priority,
+  Role,
 } from "../types";
 import ValidationError from "../errors/ValidationError";
 
-const ensureIsObject = (object: unknown): object is Record<string, unknown> => {
-  if (!object || typeof object !== "object" || Array.isArray(object)) {
+export const ensureIsObject = (object: unknown): object is object => {
+  if (!object || typeof object !== "object") {
     throw new ValidationError("Provided data is not an object");
   }
   return true;
@@ -21,7 +21,7 @@ const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
 };
 
-const parseString = (fieldName: string, value: unknown): string => {
+export const parseString = (fieldName: string, value: unknown): string => {
   if (!isString(value)) {
     throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
@@ -32,7 +32,7 @@ const isNumber = (value: unknown): value is number => {
   return typeof value === "number";
 };
 
-const parseNumber = (fieldName: string, value: unknown): number => {
+export const parseNumber = (fieldName: string, value: unknown): number => {
   if (!isNumber(value)) {
     throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
@@ -43,7 +43,7 @@ const isBoolean = (value: unknown): value is boolean => {
   return typeof value === "boolean";
 };
 
-const parseBoolean = (fieldName: string, value: unknown): boolean => {
+export const parseBoolean = (fieldName: string, value: unknown): boolean => {
   if (!isBoolean(value)) {
     throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
@@ -54,7 +54,7 @@ const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
 
-const parseDate = (fieldName: string, value: unknown): string => {
+export const parseDate = (fieldName: string, value: unknown): string => {
   if (!isString(value) || !isDate(value)) {
     throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
@@ -67,11 +67,53 @@ const isPriority = (param: string): param is Priority => {
     .includes(param);
 };
 
-const parsePriority = (fieldName: string, value: unknown): Priority => {
+export const parsePriority = (fieldName: string, value: unknown): Priority => {
   if (!isString(value) || !isPriority(value)) {
     throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
+};
+
+const isRole = (param: string): param is Role => {
+  return Object.values(Role)
+    .map((v) => v.toString())
+    .includes(param);
+};
+
+export const parseRole = (fieldName: string, value: unknown): Role => {
+  if (!isString(value) || !isRole(value)) {
+    throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
+  }
+  return value;
+};
+
+export const parseCollaborator = (object: object): Collaborator => {
+  if ("userId" in object && "role" in object) {
+    return {
+      userId: parseObjectId("userId", object.userId),
+      role: parseRole("role", object.role),
+    };
+  }
+
+  throw new ValidationError("Incorrect data: a field missing");
+};
+
+export const parseCollaborators = (
+  fieldName: string,
+  array: unknown
+): Collaborator[] => {
+  if (!Array.isArray(array)) {
+    throw new ValidationError(
+      `Incorrect or missing ${fieldName}: expected an array`
+    );
+  }
+
+  return array.map((object) => {
+    if (ensureIsObject(object)) {
+      return parseCollaborator(object);
+    }
+    throw new ValidationError("Incorrect data: a field missing");
+  });
 };
 
 const isObjectId = (id: unknown): id is ObjectId => {
@@ -79,66 +121,26 @@ const isObjectId = (id: unknown): id is ObjectId => {
   return /^[a-fA-F0-9]{24}$/.test(id);
 };
 
-const parseObjectId = (fieldName: string, value: unknown): ObjectId => {
+export const parseObjectId = (fieldName: string, value: unknown): ObjectId => {
   if (!isObjectId(value)) {
     throw new ValidationError(`Incorrect or missing ${fieldName}: ${value}`);
   }
   return value;
 };
 
-const parseFields = (
-  object: Record<string, unknown>,
-  fields: FieldInfo[]
-): Record<string, unknown> => {
-  return fields.reduce((acc, fieldInfo) => {
-    const value = object[fieldInfo.name];
-    if (!(fieldInfo.name in object)) {
-      throw new ValidationError(`Field missing: ${fieldInfo.name}`);
-    }
-
-    switch (fieldInfo.type) {
-      case "string":
-        acc[fieldInfo.name] = parseString(fieldInfo.name, value);
-        break;
-      case "number":
-        acc[fieldInfo.name] = parseNumber(fieldInfo.name, value);
-        break;
-      case "boolean":
-        acc[fieldInfo.name] = parseBoolean(fieldInfo.name, value);
-        break;
-      case "date":
-        acc[fieldInfo.name] = parseDate(fieldInfo.name, value);
-        break;
-      case "Priority":
-        acc[fieldInfo.name] = parsePriority(fieldInfo.name, value);
-        break;
-      case "ObjectId":
-        acc[fieldInfo.name] = parseObjectId(fieldInfo.name, value);
-        break;
-      default:
-        throw new ValidationError(`Unknown field type for ${fieldInfo.name}`);
-    }
-
-    return acc;
-  }, {} as Record<string, unknown>);
-};
-
 export const toNewUser = (object: unknown): NewUser => {
   if (!ensureIsObject(object)) {
     throw new ValidationError("Object validation failed");
   }
-  const requiredFields: FieldInfo[] = [
-    { name: "username", type: "string" },
-    { name: "name", type: "string" },
-    { name: "password", type: "string" },
-  ];
-  const parsedFields = parseFields(object, requiredFields);
 
-  return {
-    username: parsedFields.username as string,
-    name: parsedFields.name as string,
-    password: parsedFields.password as string,
-  };
+  if ("username" in object && "password" in object && "name" in object)
+    return {
+      username: parseString("username", object.username),
+      name: parseString("name", object.name),
+      password: parseString("password", object.password),
+    };
+
+  throw new ValidationError("Incorrect data: a field missing");
 };
 
 export const toLoginUser = (object: unknown): LoginUser => {
@@ -146,26 +148,13 @@ export const toLoginUser = (object: unknown): LoginUser => {
     throw new ValidationError("Object validation failed");
   }
 
-  const requiredFields: FieldInfo[] = [
-    { name: "username", type: "string" },
-    { name: "password", type: "string" },
-  ];
-  const parsedFields = parseFields(object, requiredFields);
-  return {
-    username: parsedFields.username as string,
-    password: parsedFields.password as string,
-  };
-};
+  if ("username" in object && "password" in object)
+    return {
+      username: parseString("username", object.username),
+      password: parseString("password", object.password),
+    };
 
-export const toNewBoard = (object: unknown): NewBoard => {
-  if (!ensureIsObject(object)) {
-    throw new ValidationError("Object validation failed");
-  }
-  const requiredFields: FieldInfo[] = [{ name: "name", type: "string" }];
-  const parsedFields = parseFields(object, requiredFields);
-  return {
-    name: parsedFields.name as string,
-  };
+  throw new ValidationError("Incorrect data: a field missing");
 };
 
 export const toNewTask = (object: unknown): NewTask => {
@@ -173,46 +162,47 @@ export const toNewTask = (object: unknown): NewTask => {
     throw new ValidationError("Object validation failed");
   }
 
-  const requiredFields: FieldInfo[] = [
-    { name: "board", type: "ObjectId" },
-    { name: "title", type: "string" },
-  ];
+  if ("board" in object && "title" in object && "createdBy" in object) {
+    const newTask: NewTask = {
+      board: parseObjectId("board", object.board),
+      title: parseString("title", object.title),
+      createdBy: parseObjectId("createdBy", object.createdBy),
+    };
 
-  const optionalFields: FieldInfo[] = [
-    { name: "description", type: "string" },
-    { name: "priority", type: "Priority" },
-    { name: "dueDate", type: "date" },
-  ];
-
-  const parsedFields = parseFields(object, requiredFields);
-
-  optionalFields.forEach((fieldInfo) => {
-    if (fieldInfo.name in object) {
-      parsedFields[fieldInfo.name] = parseFields(object, [fieldInfo])[
-        fieldInfo.name
-      ];
+    if ("description" in object) {
+      newTask.description = parseString("description", object.description);
     }
-  });
 
-  return {
-    board: parsedFields.board as ObjectId,
-    title: parsedFields.title as string,
-    description: parsedFields.description as string | undefined,
-    priority: parsedFields.priority as Priority | undefined,
-    dueDate: parsedFields.dueDate as Date | undefined,
-    createdBy: parsedFields.createdBy as ObjectId,
-  };
+    if ("dueDate" in object) {
+      newTask.dueDate = parseDate("dueDate", object.dueDate);
+    }
+
+    if ("priority" in object) {
+      newTask.priority = parsePriority("priority", object.priority);
+    }
+
+    return newTask;
+  }
+
+  throw new ValidationError("Incorrect data: a field missing");
 };
 
-export const toNewBoardCollaborator = (
-  object: unknown
-): NewBoardCollaborator => {
+export const toNewBoard = (object: unknown): NewBoard => {
   if (!ensureIsObject(object)) {
     throw new ValidationError("Object validation failed");
   }
-  const requiredFields: FieldInfo[] = [{ name: "username", type: "string" }];
-  const parsedFields = parseFields(object, requiredFields);
-  return {
-    username: parsedFields.name as string,
-  };
+  if ("name" in object) {
+    const newBoard: NewBoard = {
+      name: parseString("name", object.name),
+    };
+    if ("collaborators" in object) {
+      newBoard.collaborators = parseCollaborators(
+        "collaborators",
+        object.collaborators
+      );
+    }
+    return newBoard;
+  }
+
+  throw new ValidationError("Incorrect data: a field missing");
 };

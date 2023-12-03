@@ -3,11 +3,11 @@ import cors from "cors";
 import mongoose from "mongoose";
 import config from "./utils/config";
 import logger from "./utils/logger";
-import middleware from "./utils/middleware";
+import middleware from "./middleware/commonMiddleware";
 import usersRouter from "./controllers/users";
 import loginRouter from "./controllers/login";
 import boardRouter from "./controllers/boards";
-import taskRouter from "./controllers/tasks";
+// import taskRouter from "./controllers/tasks";
 
 const app: Express = express();
 
@@ -27,12 +27,11 @@ if (config.MONGODB_URI) {
 app.use(cors());
 app.use(express.json());
 app.use(middleware.requestLogger);
-app.use(middleware.tokenExtractor);
 
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/boards", boardRouter);
-app.use("/api/tasks", taskRouter);
+// app.use("/api/tasks", taskRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

@@ -70,9 +70,3 @@ export const HTTP_STATUS = {
   NOT_EXTENDED: 510,
   NETWORK_AUTHENTICATION_REQUIRED: 511,
 };
-
-export const TASK_PRIORITY = {
-  Low: "Low",
-  Medium: "Medium",
-  High: "High",
-};

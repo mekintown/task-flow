@@ -2,7 +2,7 @@ POST http://localhost:3003/api/users
 content-type: application/json
 
 {
-    "username": "mekintown",
+    "username": "mekindie",
     "name": "Maekin Namwong",
     "password": "Testpassword1"
 }
@@ -24,8 +24,8 @@ POST http://localhost:3003/api/login
 content-type: application/json
 
 {
-    "username": "mekintown",
-    "password": "root1234"
+    "username": "mekindie",
+    "password": "Testpassword1"
 }
 
 ###

@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { Task } from "../types";
-import { TASK_PRIORITY } from "../utils/constant";
+import { Priority, Task } from "../types";
 
 const taskSchema = new Schema<Task>(
   {
@@ -14,20 +13,20 @@ const taskSchema = new Schema<Task>(
       required: true,
       minLength: 3,
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     description: {
       type: String,
     },
     priority: {
       type: String,
-      enum: Object.values(TASK_PRIORITY),
+      enum: Object.values(Priority),
     },
     dueDate: {
       type: Date,
-    },
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
     },
   },
   {
@@ -36,7 +35,7 @@ const taskSchema = new Schema<Task>(
 );
 
 Object.assign(taskSchema.statics, {
-  TASK_PRIORITY,
+  Priority,
 });
 
 taskSchema.set("toJSON", {

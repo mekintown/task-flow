@@ -2,14 +2,14 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import express, { Request, Response } from "express";
 import User from "../models/user";
-import { asyncMiddleware } from "../utils/middleware";
+import { asyncHandler } from "../middleware/commonMiddleware";
 import { toLoginUser } from "../utils/validators";
 
 const loginRouter = express.Router();
 
 loginRouter.post(
   "/",
-  asyncMiddleware(async (request: Request, response: Response) => {
+  asyncHandler(async (request: Request, response: Response) => {
     const { username, password } = toLoginUser(request.body);
 
     const user = await User.findOne({ username });

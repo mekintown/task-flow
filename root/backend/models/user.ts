@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 import { User } from "../types";
-// import Board from "./board";
-// import boardCollaborator from "./boardCollaborator";
+import Task from "./task";
+import Board from "./board";
 
 const userSchema = new Schema<User>({
   username: {
@@ -19,10 +19,6 @@ const userSchema = new Schema<User>({
     type: String,
     required: true,
   },
-  deletedAt: {
-    type: Date,
-    default: null,
-  },
 });
 
 userSchema.plugin(uniqueValidator);
@@ -37,20 +33,22 @@ userSchema.set("toJSON", {
   },
 });
 
-// userSchema.pre(
-//   "deleteOne",
-//   { document: true, query: false },
-//   async function (next) {
-//     const boards = await Board.find({ owner: this._id });
-//     for (const board of boards) {
-//       await board.deleteOne();
-//     }
+userSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    // Delete tasks created by the user
+    await Task.deleteMany({ createdBy: this._id });
 
-//     await boardCollaborator.deleteMany({ user: this._id });
+    // Optionally, remove the user from any boards they are collaborators of
+    await Board.updateMany(
+      {},
+      { $pull: { collaborators: { userId: this._id } } }
+    );
 
-//     next();
-//   }
-// );
+    next();
+  }
+);
 
 const User = mongoose.model<User>("User", userSchema);
 

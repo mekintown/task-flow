@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/boards
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4NTc3fQ.ZjErnmoA37iqt83McVH1rDcdFcjdQ02V6JjO52-0DOY
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2luZGllIiwiaWQiOiI2NTZjOThjMDM0MzFhZDVlZjRiNGY3YTYiLCJpYXQiOjE3MDE2MTU4MTl9.OdL1m0VA4ewvXOU10ch4THHGWfkhY3Z3zTmaXeiEq4E
 
 {
     "name": "Chula"
@@ -23,9 +23,9 @@ DELETE http://localhost:3003/api/boards/65395eb42d7e9a023127aaf7
 authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4Nzg2fQ.KcqiefKIl8DRbNaVjoShuIlOxAHKeimcLpnW0OgJSvk
 
 ###
-PUT http://localhost:3003/api/boards/65395f752d7e9a023127ab0f
+PUT http://localhost:3003/api/boards/656c997d89da796abaadc2ee
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4Nzg2fQ.KcqiefKIl8DRbNaVjoShuIlOxAHKeimcLpnW0OgJSvk
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2luZGllIiwiaWQiOiI2NTZjOThjMDM0MzFhZDVlZjRiNGY3YTYiLCJpYXQiOjE3MDE2MTU4MTl9.OdL1m0VA4ewvXOU10ch4THHGWfkhY3Z3zTmaXeiEq4E
 
 {
     "name": "Yeaha"

@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import express, { Request, Response, NextFunction } from "express";
 import User from "../models/user"; // Assuming that User is the default export from the user model
 import { toNewUser } from "../utils/validators";
-import { asyncMiddleware } from "../utils/middleware";
+import { asyncHandler } from "../middleware/commonMiddleware";
 import { HTTP_STATUS } from "../utils/constant";
 import config from "../utils/config";
 import validator from "validator";
@@ -11,7 +11,7 @@ const usersRouter = express.Router();
 
 usersRouter.get(
   "/",
-  asyncMiddleware(async (_request: Request, response: Response) => {
+  asyncHandler(async (_request: Request, response: Response) => {
     const users = await User.find({});
     response.json(users);
   })
@@ -19,7 +19,7 @@ usersRouter.get(
 
 usersRouter.post(
   "/",
-  asyncMiddleware(
+  asyncHandler(
     async (request: Request, response: Response, next: NextFunction) => {
       const { username, name, password } = toNewUser(request.body);
       if (
