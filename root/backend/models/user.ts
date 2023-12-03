@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-import { User } from "../types";
+import { Role, User } from "../types";
 import Task from "./task";
 import Board from "./board";
 
@@ -19,9 +19,21 @@ const userSchema = new Schema<User>({
     type: String,
     required: true,
   },
+  boards: [
+    {
+      boardId: { type: Schema.Types.ObjectId, ref: "Board" },
+      role: {
+        type: String,
+        enum: Object.values(Role),
+      },
+    },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);
+Object.assign(userSchema.statics, {
+  Role,
+});
 
 userSchema.set("toJSON", {
   transform: (_document: Document, returnedObject) => {
@@ -40,7 +52,7 @@ userSchema.pre(
     // Delete tasks created by the user
     await Task.deleteMany({ createdBy: this._id });
 
-    // Optionally, remove the user from any boards they are collaborators of
+    // Remove the user from any boards they are collaborators of
     await Board.updateMany(
       {},
       { $pull: { collaborators: { userId: this._id } } }

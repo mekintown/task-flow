@@ -6,6 +6,8 @@ import { asyncHandler } from "../middleware/commonMiddleware";
 import { HTTP_STATUS } from "../utils/constant";
 import config from "../utils/config";
 import validator from "validator";
+import { protect } from "../middleware/auth";
+import { ProtectRequest } from "../types";
 
 const usersRouter = express.Router();
 
@@ -49,12 +51,26 @@ usersRouter.post(
 
       const passwordHash = await bcrypt.hash(password, config.SALT_ROUNDS);
 
-      const user = new User({ username, name, passwordHash });
+      const user = new User({ username, name, passwordHash, boards: [] });
 
       const savedUser = await user.save();
 
       response.status(HTTP_STATUS.CREATED).json(savedUser);
     }
   )
+);
+
+usersRouter.get(
+  "/me",
+  asyncHandler(protect), // Use the authentication middleware
+  asyncHandler(async (request: ProtectRequest, response: Response) => {
+    const user = await User.findById(request.user.id);
+    if (!user) {
+      response.status(HTTP_STATUS.NOT_FOUND).send({ error: "User not found" });
+      return;
+    }
+
+    response.json(user);
+  })
 );
 export default usersRouter;

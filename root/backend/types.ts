@@ -15,12 +15,18 @@ export enum Role {
 }
 
 // User-related interfaces
+export interface BoardCollaboration {
+  boardId: ObjectId;
+  role: Role;
+}
+
 export interface User extends Document {
   _id: ObjectId;
   id: string;
   username: string;
   name: string;
   passwordHash: string;
+  boards: BoardCollaboration[];
 }
 
 export type NonSensitiveUser = Omit<User, "passwordHash">;

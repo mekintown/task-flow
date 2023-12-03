@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { Board, Role } from "../types";
 import Task from "./task";
+import User from "./user";
 
 const boardSchema = new Schema<Board>(
   {
@@ -50,6 +51,7 @@ boardSchema.pre(
   async function (next) {
     await Task.deleteMany({ board: this._id });
 
+    await User.updateMany({}, { $pull: { boards: { boardId: this._id } } });
     next();
   }
 );
