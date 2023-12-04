@@ -65,6 +65,7 @@ export interface NewBoard {
 export interface Task extends Document {
   _id: ObjectId;
   id: string;
+  board: ObjectId;
   title: string;
   description?: string;
   priority?: Priority;

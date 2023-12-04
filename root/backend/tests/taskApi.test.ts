@@ -87,8 +87,8 @@ describe("Task API", () => {
       .expect(200)
       .expect("Content-Type", /application\/json/);
 
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].title).toBe("Board Task");
+    expect(response.body.data).toHaveLength(1);
+    expect(response.body.data[0].title).toBe("Board Task");
   });
 
   test("should update a task", async () => {
@@ -137,6 +137,39 @@ describe("Task API", () => {
     const board = await Board.findById(boardId);
     expect(board!.tasks).not.toContainEqual(task._id);
   });
+
+  test("should paginate tasks by returning the correct page and limit", async () => {
+    const tasksIds = [];
+    for (let i = 0; i < 15; i++) {
+      const task = await testHelper.createTask(authToken, boardId, {
+        title: `Task ${i}`,
+        description: `Task description ${i}`,
+        priority: Priority.High,
+        dueDate: new Date().toISOString(),
+      });
+      tasksIds.push(task.id);
+    }
+
+    const page = 2;
+    const limit = 5;
+
+    const response = await api
+      .get(`/api/tasks/${boardId}?page=${page}&limit=${limit}`)
+      .set("Authorization", `Bearer ${authToken}`)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    // Check if the response contains the correct number of tasks
+    expect(response.body.data).toHaveLength(limit);
+
+    // Check if the pagination metadata is correct
+    expect(response.body.pagination.currentPage).toBe(page);
+    expect(response.body.pagination.totalPages).toBe(
+      Math.ceil(tasksIds.length / limit)
+    );
+    expect(response.body.pagination.totalTasks).toBe(tasksIds.length);
+    expect(response.body.pagination.limit).toBe(limit);
+  }, 100000);
 
   afterAll(async () => {
     await mongoose.connection.close();

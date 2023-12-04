@@ -21,6 +21,7 @@ const createTask = async (request: AuthorizeRequest, response: Response) => {
     const task = new Task({
       ...newTask,
       createdBy: request.user._id,
+      board: boardId,
     });
 
     const savedTask = await task.save({ session });
@@ -60,18 +61,47 @@ const getTasksByBoard = async (
   request: AuthorizeRequest,
   response: Response
 ) => {
-  const board = await Board.findById({
-    _id: request.params.boardId,
-  }).populate({
-    path: "tasks",
-  });
+  // Retrieve 'page' and 'limit' from the query parameters and set default values if not provided
+  const page = parseInt(request.query.page as string) || 1;
+  const limit = parseInt(request.query.limit as string) || 10; // Default is 10 tasks per page
 
-  if (!board) {
-    response.status(HTTP_STATUS.NOT_FOUND).send({ error: "Board not found" });
-    return;
+  const boardId = request.params.boardId;
+
+  try {
+    const board = await Board.findById(boardId);
+    if (!board) {
+      response.status(HTTP_STATUS.NOT_FOUND).send({ error: "Board not found" });
+      return;
+    }
+
+    // Get total count of tasks for pagination metadata
+    const totalTasks = await Task.countDocuments({ board: boardId });
+
+    // Calculate the starting index
+    const startIndex = (page - 1) * limit;
+
+    // Find tasks with pagination
+    const tasks = await Task.find({ board: boardId })
+      .sort({ createdAt: -1 }) // Sort by most recent. Adjust as needed.
+      .skip(startIndex)
+      .limit(limit)
+      .exec();
+
+    // Pagination metadata
+    const pagination = {
+      currentPage: page,
+      totalPages: Math.ceil(totalTasks / limit),
+      totalTasks,
+      limit,
+    };
+
+    response.json({
+      pagination,
+      data: tasks, // The paginated result tasks
+    });
+  } catch (error) {
+    response.status(500).send({ error: "Internal Server Error" });
   }
-
-  response.json(board.tasks);
 };
 
 const deleteTask = async (request: AuthorizeRequest, response: Response) => {
