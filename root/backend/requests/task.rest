@@ -1,8 +1,7 @@
-POST http://localhost:3003/api/tasks
+POST http://localhost:3003/api/tasks/656cd59686fec8faa4b9dc38
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2ludG93biIsImlkIjoiNjUzOTVlNzUyZDdlOWEwMjMxMjdhYWVlIiwiaWF0IjoxNjk4MjU4NTc3fQ.ZjErnmoA37iqt83McVH1rDcdFcjdQ02V6JjO52-0DOY
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1la2luYSIsImlkIjoiNjU2Y2Q1M2Y4NmZlYzhmYWE0YjlkYzMwIiwiaWF0IjoxNzAxNjY1MTc5fQ.qCwwTZ9-rw5lBQRWTQBXGcyLwpWEIBXGiUkByDI2E9M
 
 {
-    "board": "65395f752d7e9a023127ab0f",
     "title": "First"
 }

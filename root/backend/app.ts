@@ -7,7 +7,7 @@ import middleware from "./middleware/commonMiddleware";
 import usersRouter from "./controllers/users";
 import loginRouter from "./controllers/login";
 import boardRouter from "./controllers/boards";
-// import taskRouter from "./controllers/tasks";
+import taskRouter from "./controllers/tasks";
 
 const app: Express = express();
 
@@ -31,7 +31,7 @@ app.use(middleware.requestLogger);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/boards", boardRouter);
-// app.use("/api/tasks", taskRouter);
+app.use("/api/tasks", taskRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

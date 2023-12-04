@@ -53,7 +53,7 @@ export interface Board extends Document {
   id: string;
   name: string;
   collaborators: Collaborator[];
-  tasks?: Task[];
+  tasks: Task[];
 }
 
 export interface NewBoard {
@@ -77,7 +77,6 @@ export interface NewTask {
   description?: string;
   priority?: Priority;
   dueDate?: string;
-  createdBy: ObjectId;
 }
 
 // Request-related interfaces

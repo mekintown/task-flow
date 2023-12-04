@@ -1,6 +1,6 @@
 import supertest from "supertest";
 import app from "../app";
-import { Board, NewBoard } from "../types";
+import { Board, NewBoard, NewTask, Task } from "../types";
 
 const api = supertest(app);
 
@@ -32,6 +32,18 @@ const createBoard = async (authToken: string, boardData: NewBoard) => {
   return response.body as Board;
 };
 
-const testHelper = { createUserAndLogin, createBoard };
+const createTask = async (
+  authToken: string,
+  boardId: string,
+  taskData: NewTask
+) => {
+  const response = await api
+    .post(`/api/tasks/${boardId}`)
+    .set("Authorization", `Bearer ${authToken}`)
+    .send(taskData);
+  return response.body as Task;
+};
+
+const testHelper = { createUserAndLogin, createBoard, createTask };
 
 export default testHelper;
