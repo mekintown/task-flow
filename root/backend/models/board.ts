@@ -32,6 +32,8 @@ const boardSchema = new Schema<Board>(
   }
 );
 
+// boardSchema.index({ "collaborators.userId": 1, "collaborators.role": 1 });
+
 Object.assign(boardSchema.statics, {
   Role,
 });

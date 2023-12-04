@@ -16,7 +16,7 @@ const createUserAndLogin = async (
   };
 
   await api.post("/api/users").send(user);
-  const response = await api.post("/api/login").send({
+  const response = await api.post("/api/auth/login").send({
     username: user.username,
     password: user.password,
   });

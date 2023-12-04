@@ -4,10 +4,10 @@ import mongoose from "mongoose";
 import config from "./utils/config";
 import logger from "./utils/logger";
 import middleware from "./middleware/commonMiddleware";
-import usersRouter from "./controllers/users";
-import loginRouter from "./controllers/login";
-import boardRouter from "./controllers/boards";
-import taskRouter from "./controllers/tasks";
+import boardRouter from "./routes/boards";
+import taskRouter from "./routes/tasks";
+import usersRouter from "./routes/users";
+import authRouter from "./routes/auth";
 
 const app: Express = express();
 
@@ -28,8 +28,8 @@ app.use(cors());
 app.use(express.json());
 app.use(middleware.requestLogger);
 
+app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/login", loginRouter);
 app.use("/api/boards", boardRouter);
 app.use("/api/tasks", taskRouter);
 

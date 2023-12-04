@@ -19,7 +19,7 @@ describe("Board API", () => {
 
     // Get user ID for testing user boards
     const userResponse = await api
-      .get("/api/users/me")
+      .get("/api/auth/me")
       .set("Authorization", `Bearer ${authToken}`);
 
     userId = userResponse.body.id as string;
@@ -146,7 +146,7 @@ describe("Board API", () => {
       "SecondPassword1"
     );
     const secondUserResponse = await api
-      .get("/api/users/me")
+      .get("/api/auth/me")
       .set("Authorization", `Bearer ${secondUserToken}`);
 
     const secondUserId = secondUserResponse.body.id as string;

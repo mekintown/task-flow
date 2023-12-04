@@ -132,33 +132,6 @@ describe("JSON Transformation Tests", () => {
   });
 });
 
-// describe("Deletion Tests", () => {
-//   test("deleting a user also deletes their boards", async () => {
-//     const user = {
-//       username: "testuser",
-//       name: "Test User",
-//       password: "Testpassword1",
-//     };
-
-//     // Create a user
-//     const savedUser = await api.post("/api/users").send(user);
-
-//     // Create a board for that user
-//     await api.post("/api/boards").send({
-//       title: "Test Board",
-//     });
-
-//     // Delete the user
-//     await api.delete(`/api/users/${savedUser.body.id}`);
-
-//     // Check that the board for that user no longer exists
-//     const boardsAfterDeletion = await api.get("/api/boards");
-//     expect(boardsAfterDeletion.body).toHaveLength(0);
-//   });
-
-//   // once the logic for board collaborators is available.
-// });
-
 afterAll(async () => {
   await mongoose.connection.close();
 });
