@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Board from "../models/board";
 import { toNewBoard } from "../utils/validators";
 import { HTTP_STATUS } from "../utils/constant";
-import { Collaborator, ProtectRequest, Role } from "../types";
+import { ProtectRequest, Role } from "../types";
 import { ObjectId } from "mongoose";
 import User from "../models/user";
 
@@ -18,7 +18,6 @@ const addUserBoard = async (
   );
 };
 
-// Removes a board from a user's boards array
 const removeUserBoard = async (
   userId: ObjectId | string,
   boardId: ObjectId | string
@@ -32,8 +31,6 @@ const removeUserBoard = async (
 
 const createBoard = async (request: ProtectRequest, response: Response) => {
   const boardData = toNewBoard(request.body);
-
-  // Ensuring collaborators array exists and adding the creator as Owner
   if (!Array.isArray(boardData.collaborators)) {
     boardData.collaborators = [];
   }
@@ -41,41 +38,49 @@ const createBoard = async (request: ProtectRequest, response: Response) => {
     userId: request.user._id,
     role: Role.Owner,
   });
-
   const board = new Board(boardData);
   const savedBoard = await board.save();
 
-  // Add the board to each collaborator's user boards array
-  for (const collaborator of boardData.collaborators) {
-    await addUserBoard(collaborator.userId, savedBoard._id, collaborator.role);
-  }
+  await Promise.all(
+    boardData.collaborators.map((collaborator) =>
+      addUserBoard(collaborator.userId, savedBoard._id, collaborator.role)
+    )
+  );
 
   const savedBoardPopulated = await Board.findById(savedBoard._id).populate({
     path: "collaborators.userId",
     select: "username name",
   });
-
   response.status(HTTP_STATUS.CREATED).json(savedBoardPopulated);
 };
 
 const getAllBoards = async (_request: Request, response: Response) => {
   const boards = await Board.find({})
-    .populate({
-      path: "tasks",
-      select: "title createdBy description dueDate priority",
-    })
-    .populate({
-      path: "collaborators.userId",
-      select: "username name",
-    });
-
+    .lean()
+    .populate([
+      {
+        path: "tasks",
+        select: "title createdBy description dueDate priority",
+      },
+      {
+        path: "collaborators.userId",
+        select: "username name",
+      },
+    ]);
   response.json(boards);
 };
 
 const getBoardById = async (request: Request, response: Response) => {
-  const board = await Board.findById(request.params.boardId)
-    .populate("tasks")
-    .populate("collaborators.userId");
+  const board = await Board.findById(request.params.boardId).populate([
+    {
+      path: "tasks",
+      select: "title createdBy description dueDate priority",
+    },
+    {
+      path: "collaborators.userId",
+      select: "username name",
+    },
+  ]);
   if (!board) {
     response.status(HTTP_STATUS.NOT_FOUND).json({ error: "Board not found" });
     return;
@@ -85,60 +90,55 @@ const getBoardById = async (request: Request, response: Response) => {
 
 const deleteBoard = async (request: ProtectRequest, response: Response) => {
   const boardId = request.params.boardId;
-  const board = await Board.findById(boardId);
-
+  const board = await Board.findByIdAndRemove(boardId);
   if (board) {
-    // Remove the board from each collaborator's user boards array
-    for (const collaborator of board.collaborators) {
-      await removeUserBoard(collaborator.userId, boardId);
-    }
+    await Promise.all(
+      board.collaborators.map((collaborator) =>
+        removeUserBoard(collaborator.userId, boardId)
+      )
+    );
   }
-
-  await Board.findByIdAndRemove(boardId);
   response.status(HTTP_STATUS.NO_CONTENT).end();
 };
 
 const updateBoard = async (request: ProtectRequest, response: Response) => {
   const boardId = request.params.boardId;
   const { name, collaborators } = toNewBoard(request.body);
-
   const originalBoard = await Board.findById(boardId);
   if (!originalBoard) {
     response.status(HTTP_STATUS.NOT_FOUND).json({ error: "Board not found" });
     return;
   }
-  // Update the board
+
   const updatedBoard = await Board.findByIdAndUpdate(
     boardId,
     { name, collaborators },
     { new: true, runValidators: true, context: "query" }
   );
 
-  // Update user boards for new collaborators
   if (collaborators) {
-    // Add new collaborators to user boards
-    for (const collaborator of collaborators) {
-      if (
+    // Find collaborators to add and remove
+    const collaboratorsToAdd = collaborators.filter(
+      (collaborator) =>
         !originalBoard.collaborators.some(
-          (c: Collaborator) => c.userId === collaborator.userId
+          (c) => c.userId === collaborator.userId
         )
-      ) {
-        await addUserBoard(collaborator.userId, boardId, collaborator.role);
-      }
-    }
+    );
+    const collaboratorsToRemove = originalBoard.collaborators.filter(
+      (originalCollaborator) =>
+        !collaborators.some((c) => c.userId === originalCollaborator.userId)
+    );
 
-    // Remove removed collaborators from user boards
-    for (const originalCollaborator of originalBoard.collaborators) {
-      if (
-        !collaborators.some(
-          (c: Collaborator) => c.userId === originalCollaborator.userId
-        )
-      ) {
-        await removeUserBoard(originalCollaborator.userId, boardId);
-      }
-    }
+    // Perform batch operations
+    await Promise.all([
+      ...collaboratorsToAdd.map((collaborator) =>
+        addUserBoard(collaborator.userId, boardId, collaborator.role)
+      ),
+      ...collaboratorsToRemove.map((collaborator) =>
+        removeUserBoard(collaborator.userId, boardId)
+      ),
+    ]);
   }
-
   response.json(updatedBoard);
 };
 
@@ -149,4 +149,5 @@ const boardController = {
   deleteBoard,
   updateBoard,
 };
+
 export default boardController;
