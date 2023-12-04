@@ -28,7 +28,7 @@ describe("Users API", () => {
     };
 
     await api
-      .post("/api/users")
+      .post("/api/auth/register")
       .send(newUser)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -49,15 +49,15 @@ describe("Validation Tests", () => {
       password: "Testpassword1",
     };
 
-    await api.post("/api/users").send(user);
+    await api.post("/api/auth/register").send(user);
 
-    const result = await api.post("/api/users").send(user);
+    const result = await api.post("/api/auth/register").send(user);
 
     expect(result.status).toBe(400);
   });
 
   test("adding a user with a password less than 8 characters", async () => {
-    const result = await api.post("/api/users").send({
+    const result = await api.post("/api/auth/register").send({
       username: "testuser",
       name: "Test User",
       password: "Test1",
@@ -67,7 +67,7 @@ describe("Validation Tests", () => {
   });
 
   test("adding a user with a password without uppercase characters", async () => {
-    const result = await api.post("/api/users").send({
+    const result = await api.post("/api/auth/register").send({
       username: "testuser",
       name: "Test User",
       password: "testpassword1",
@@ -77,7 +77,7 @@ describe("Validation Tests", () => {
   });
 
   test("adding a user with a password without lowercase characters", async () => {
-    const result = await api.post("/api/users").send({
+    const result = await api.post("/api/auth/register").send({
       username: "testuser",
       name: "Test User",
       password: "TESTPASSWORD1",
@@ -87,7 +87,7 @@ describe("Validation Tests", () => {
   });
 
   test("adding a user with a password without numbers", async () => {
-    const result = await api.post("/api/users").send({
+    const result = await api.post("/api/auth/register").send({
       username: "testuser",
       name: "Test User",
       password: "TestPassword",
@@ -97,7 +97,7 @@ describe("Validation Tests", () => {
   });
 
   test("adding a user without a password", async () => {
-    const result = await api.post("/api/users").send({
+    const result = await api.post("/api/auth/register").send({
       username: "testuser",
       name: "Test User",
     });
@@ -106,7 +106,7 @@ describe("Validation Tests", () => {
   });
 
   test("adding a user without a username", async () => {
-    const result = await api.post("/api/users").send({
+    const result = await api.post("/api/auth/register").send({
       name: "Test User",
       password: "Testpassword1",
     });
@@ -123,7 +123,7 @@ describe("JSON Transformation Tests", () => {
       password: "Testpassword1",
     };
 
-    const result = await api.post("/api/users").send(newUser);
+    const result = await api.post("/api/auth/register").send(newUser);
 
     expect(result.body.passwordHash).toBeUndefined();
     expect(result.body.id).toBeDefined();

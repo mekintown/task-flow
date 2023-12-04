@@ -5,7 +5,7 @@ import authController from "../controllers/auth";
 
 const authRouter = express.Router();
 
-// authRouter.post("/register", asyncHandler(authController.register));
+authRouter.post("/register", asyncHandler(authController.register));
 authRouter.post("/login", asyncHandler(authController.login));
 authRouter.get(
   "/me",
