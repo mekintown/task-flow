@@ -3,8 +3,9 @@ import Board from "../models/board";
 import { toNewBoard } from "../utils/validators";
 import { HTTP_STATUS } from "../utils/constant";
 import { ProtectRequest, Role } from "../types";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import User from "../models/user";
+import { AnyBulkWriteOperation } from "mongodb";
 
 const addUserBoard = async (
   userId: ObjectId | string,
@@ -30,28 +31,50 @@ const removeUserBoard = async (
 };
 
 const createBoard = async (request: ProtectRequest, response: Response) => {
-  const boardData = toNewBoard(request.body);
-  if (!Array.isArray(boardData.collaborators)) {
-    boardData.collaborators = [];
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const boardData = toNewBoard(request.body);
+    if (!Array.isArray(boardData.collaborators)) {
+      boardData.collaborators = [];
+    }
+    boardData.collaborators.push({
+      userId: request.user._id,
+      role: Role.Owner,
+    });
+    const board = new Board(boardData);
+    const savedBoard = await board.save({ session });
+
+    const bulkOps = boardData.collaborators.map((collaborator) => ({
+      updateOne: {
+        filter: { _id: collaborator.userId },
+        update: {
+          $addToSet: {
+            boards: { boardId: savedBoard._id, role: collaborator.role },
+          },
+        },
+        upsert: true,
+      },
+    }));
+
+    await User.bulkWrite(bulkOps as AnyBulkWriteOperation<User>[], {
+      session,
+    });
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    const savedBoardPopulated = await Board.findById(savedBoard._id).populate({
+      path: "collaborators.userId",
+      select: "username name",
+    });
+
+    response.status(HTTP_STATUS.CREATED).json(savedBoardPopulated);
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw error; // Handled by global error handler
   }
-  boardData.collaborators.push({
-    userId: request.user._id,
-    role: Role.Owner,
-  });
-  const board = new Board(boardData);
-  const savedBoard = await board.save();
-
-  await Promise.all(
-    boardData.collaborators.map((collaborator) =>
-      addUserBoard(collaborator.userId, savedBoard._id, collaborator.role)
-    )
-  );
-
-  const savedBoardPopulated = await Board.findById(savedBoard._id).populate({
-    path: "collaborators.userId",
-    select: "username name",
-  });
-  response.status(HTTP_STATUS.CREATED).json(savedBoardPopulated);
 };
 
 const getAllBoards = async (_request: Request, response: Response) => {
@@ -89,16 +112,37 @@ const getBoardById = async (request: Request, response: Response) => {
 };
 
 const deleteBoard = async (request: ProtectRequest, response: Response) => {
-  const boardId = request.params.boardId;
-  const board = await Board.findByIdAndRemove(boardId);
-  if (board) {
-    await Promise.all(
-      board.collaborators.map((collaborator) =>
-        removeUserBoard(collaborator.userId, boardId)
-      )
-    );
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const boardId = request.params.boardId;
+    const board = await Board.findByIdAndRemove(boardId, { session });
+    if (board) {
+      const bulkOps = board.collaborators.map((collaborator) => ({
+        updateOne: {
+          filter: { _id: collaborator.userId },
+          update: {
+            $pull: {
+              boards: { boardId: board._id },
+            },
+          },
+        },
+      }));
+
+      await User.bulkWrite(bulkOps as AnyBulkWriteOperation<User>[], {
+        session,
+      });
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    response.status(HTTP_STATUS.NO_CONTENT).end();
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw error;
   }
-  response.status(HTTP_STATUS.NO_CONTENT).end();
 };
 
 const updateBoard = async (request: ProtectRequest, response: Response) => {

@@ -5,7 +5,9 @@ const info = (...params: unknown[]): void => {
 };
 
 const error = (...params: unknown[]): void => {
-  console.error(...params);
+  if (process.env.NODE_ENV !== "test") {
+    console.log(...params);
+  }
 };
 
 export default { info, error };

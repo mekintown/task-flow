@@ -42,7 +42,7 @@ taskSchema.set("toJSON", {
   },
 });
 
-taskSchema.index({ board: 1 });
+// taskSchema.index({ board: 1 });
 
 const Task = mongoose.model<Task>("Task", taskSchema);
 

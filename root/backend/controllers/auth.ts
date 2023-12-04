@@ -8,6 +8,13 @@ import { HTTP_STATUS } from "../utils/constant";
 import config from "../utils/config";
 import validator from "validator";
 
+/**
+ * Registers a new user.
+ *
+ * @param request - The request object.
+ * @param response - The response object.
+ * @param next - The next function.
+ */
 const register = async (
   request: Request,
   response: Response,
@@ -52,11 +59,19 @@ const login = async (request: Request, response: Response) => {
   const { username, password } = toLoginUser(request.body);
 
   const user = await User.findOne({ username });
-  const passwordCorrect = user
-    ? await bcrypt.compare(password, user.passwordHash)
-    : false;
+  if (!user) {
+    // Simulate password hash comparison time
+    await bcrypt.compare(password, bcrypt.hashSync("", config.SALT_ROUNDS));
 
-  if (!user || !passwordCorrect) {
+    response.status(401).json({
+      error: "invalid username or password",
+    });
+    return;
+  }
+
+  const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
+
+  if (!passwordCorrect) {
     response.status(401).json({
       error: "invalid username or password",
     });
