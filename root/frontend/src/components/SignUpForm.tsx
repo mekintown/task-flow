@@ -44,18 +44,20 @@ const SignUpForm = () => {
             </div>
             <form onSubmit={onSubmit} className="grid grid-cols-2 gap-5">
               <div className="flex flex-col gap-2 col-span-2 dark:text-white">
-                <label htmlFor="username">Username</label>
+                <label htmlFor="username" className="input-label">
+                  Username
+                </label>
                 <input
                   id="username"
                   type="text"
                   placeholder="mekintown"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="px-5 py-2 border-gray-300 border-[1px] rounded-2xl"
+                  className="signin-input border-gray-300"
                 ></input>
               </div>
               <div className="flex flex-col gap-2 col-span-2">
-                <label htmlFor="password" className="dark:text-white">
+                <label htmlFor="password" className="input-label">
                   Password
                 </label>
                 <input
@@ -64,13 +66,13 @@ const SignUpForm = () => {
                   placeholder="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`px-5 py-2 border-${
+                  className={`signin-input border-${
                     passwordError ? "red-500" : "gray-300"
-                  } border-[1px] rounded-2xl`}
+                  }`}
                 ></input>
               </div>
               <div className="flex flex-col gap-2 col-span-2">
-                <label htmlFor="password2" className="dark:text-white">
+                <label htmlFor="password2" className="input-label">
                   Confirm your password
                 </label>
                 <input
@@ -79,16 +81,16 @@ const SignUpForm = () => {
                   placeholder="Type password again"
                   value={password2}
                   onChange={(e) => setPassword2(e.target.value)}
-                  className={`px-5 py-2 border-${
+                  className={`signin-input border-${
                     passwordError ? "red-500" : "gray-300"
-                  } border-[1px] rounded-2xl`}
+                  }`}
                 ></input>
                 {passwordError && (
                   <p className="text-red-500">{passwordError}</p>
                 )}
               </div>
               <div className="flex flex-col gap-2 col-span-2">
-                <label htmlFor="firstName" className="dark:text-white">
+                <label htmlFor="firstName" className="input-label">
                   Name
                 </label>
                 <input
@@ -97,13 +99,13 @@ const SignUpForm = () => {
                   placeholder="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="px-5 py-2 border-gray-300 border-[1px] rounded-2xl"
+                  className="signin-input"
                 ></input>
               </div>
 
               <button
                 type="submit"
-                className="rounded-2xl bg-sky-500 py-2 mt-2 text-white"
+                className="btn-primary col-span-1 mt-2 dark:text-white"
               >
                 Sign up
               </button>

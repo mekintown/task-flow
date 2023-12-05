@@ -1,5 +1,5 @@
 import Home from "./components/HomePage";
-import LoginForm from "./components/LoginForm";
+import SignInForm from "./components/SignInForm";
 import SignUpForm from "./components/SignUpForm";
 import { Routes, Route } from "react-router-dom";
 
@@ -8,7 +8,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/auth/signup" element={<SignUpForm />} />
-      <Route path="/auth/login" element={<LoginForm />}></Route>
+      <Route path="/auth/signin" element={<SignInForm />} />
     </Routes>
   );
 }
