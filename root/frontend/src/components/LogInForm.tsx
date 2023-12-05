@@ -1,14 +1,38 @@
 "use client";
 import { BsCloudHaze2Fill } from "react-icons/bs";
 import { useState } from "react";
+import authService from "../services/auth";
+import { User } from "../types";
+import axios from "axios";
 
-const LogInForm = () => {
-  const [email, setEmail] = useState("");
+interface Props {
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+const LogInForm = ({ setUser }: Props) => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleLogin = async (event: React.SyntheticEvent) => {
+    event.preventDefault();
+
+    try {
+      const user = await authService.login({
+        username,
+        password,
+      });
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+
+      setUser(user);
+      setUsername("");
+      setPassword("");
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.log(e.response?.data);
+      }
+    }
   };
+
   return (
     <div className="h-screen">
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 dark:bg-gray-900">
@@ -20,19 +44,19 @@ const LogInForm = () => {
         </div>
 
         <div className="flex flex-col gap-10 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={onSubmit}>
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div>
-              <label htmlFor="email" className="input-label">
-                Email address
+              <label htmlFor="username" className="input-label">
+                Username
               </label>
               <div className="mt-2">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="username"
+                  name="username"
+                  type="username"
+                  autoComplete="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   className="login-input"
                 />

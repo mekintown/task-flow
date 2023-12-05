@@ -4,18 +4,12 @@ import { Board, NewBoard } from "../types";
 // Base URL for board-related requests
 const baseUrl = "http://localhost:3003/api/boards";
 
-// Token management
-let token: string | null = null;
-
-const setToken = (newToken: string): void => {
-  token = `Bearer ${newToken}`;
-};
-
 // Axios instance for making requests with the token
 const axiosInstance = axios.create();
 
 axiosInstance.interceptors.request.use((config) => {
   config.headers = config.headers || {};
+  const token = `Bearer ${localStorage.getItem("loggedUserToken")}`; // Retrieve token from localStorage
   if (token) {
     config.headers.Authorization = token;
   }
@@ -82,7 +76,6 @@ const updateBoard = async (
 
 // Exporting the service and setToken function
 export const boardService = {
-  setToken,
   createBoard,
   getAllBoards,
   getBoardById,

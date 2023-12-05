@@ -1,4 +1,5 @@
 import axios from "axios";
+import { User } from "../types";
 
 const baseUrl = "http://localhost:3003/api/auth";
 
@@ -18,9 +19,7 @@ const login = async (credentials: { username: string; password: string }) => {
   }
 };
 
-const logout = (
-  setUser: (arg0: React.SetStateAction<object | null>) => void
-) => {
+const logout = (setUser: React.Dispatch<React.SetStateAction<User | null>>) => {
   window.localStorage.removeItem("loggedBlogappUser");
   setUser(null);
 };

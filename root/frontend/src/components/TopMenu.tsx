@@ -3,7 +3,7 @@ import { IoMdNotifications } from "react-icons/io";
 
 function TopMenu() {
   return (
-    <nav className="bg-white drop-shadow">
+    <nav className="absolute w-screen bg-white drop-shadow">
       <div className="mx-auto  px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div></div>

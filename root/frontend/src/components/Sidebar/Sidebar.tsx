@@ -5,7 +5,8 @@ import {
   BsCloudHaze2Fill,
 } from "react-icons/bs";
 
-import { FaFire, FaPoo } from "react-icons/fa";
+import { BiSolidLogOut } from "react-icons/bi";
+
 import SideBarIcon from "./SidebarIcon";
 
 const Sidebar = () => {
@@ -15,8 +16,9 @@ const Sidebar = () => {
       <hr className="sidebar-hr" />
       <SideBarIcon icon={<BsPlus size="32" />} text="Add Board +" />
       <SideBarIcon icon={<BsFillLightningFill size="20" />} />
-      <SideBarIcon icon={<FaPoo size="20" />} />
-      <SideBarIcon icon={<BsGearFill size="22" />} text="Setting" />
+      <hr className="sidebar-hr" />
+      <SideBarIcon icon={<BiSolidLogOut size="24" />} text="Logout" />
+      {/* <SideBarIcon icon={<BsGearFill size="22" />} text="Setting" /> */}
     </div>
   );
 };

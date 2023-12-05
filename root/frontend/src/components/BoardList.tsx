@@ -6,7 +6,7 @@ function BoardList() {
     { boardId: "1", ImgSrc: "", boardName: "Chula", collaborators: "" },
   ];
   return (
-    <div className="grid grid-cols-4 gap-4 mt-4 p-4">
+    <div className="grid grid-cols-4 gap-4 mt-4 p-4 w-full">
       <BoardCard />
       <BoardCard />
       <BoardCard />
