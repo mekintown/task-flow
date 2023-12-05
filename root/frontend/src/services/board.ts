@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Board, NewBoard } from "../types";
 
 // Base URL for board-related requests
 const baseUrl = "http://localhost:3003/api/boards";
@@ -22,7 +23,7 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 // Service methods with error handling
-const createBoard = async (boardData: any): Promise<any> => {
+const createBoard = async (boardData: NewBoard): Promise<Board> => {
   try {
     const response = await axiosInstance.post(baseUrl, boardData);
     return response.data;
@@ -33,7 +34,7 @@ const createBoard = async (boardData: any): Promise<any> => {
   }
 };
 
-const getAllBoards = async (): Promise<any> => {
+const getAllBoards = async (): Promise<Board> => {
   try {
     const response = await axiosInstance.get(baseUrl);
     return response.data;
@@ -43,7 +44,7 @@ const getAllBoards = async (): Promise<any> => {
   }
 };
 
-const getBoardById = async (boardId: string): Promise<any> => {
+const getBoardById = async (boardId: string): Promise<Board> => {
   try {
     const response = await axiosInstance.get(`${baseUrl}/${boardId}`);
     return response.data;
@@ -53,7 +54,7 @@ const getBoardById = async (boardId: string): Promise<any> => {
   }
 };
 
-const deleteBoard = async (boardId: string): Promise<any> => {
+const deleteBoard = async (boardId: string): Promise<Board> => {
   try {
     const response = await axiosInstance.delete(`${baseUrl}/${boardId}`);
     return response.data;
@@ -63,7 +64,10 @@ const deleteBoard = async (boardId: string): Promise<any> => {
   }
 };
 
-const updateBoard = async (boardId: string, updatedData: any): Promise<any> => {
+const updateBoard = async (
+  boardId: string,
+  updatedData: NewBoard
+): Promise<Board> => {
   try {
     const response = await axiosInstance.put(
       `${baseUrl}/${boardId}`,
