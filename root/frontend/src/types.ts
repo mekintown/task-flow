@@ -3,6 +3,7 @@ export enum Priority {
   Low = "Low",
   Medium = "Medium",
   High = "High",
+  None = "None",
 }
 
 export enum Role {
@@ -63,7 +64,6 @@ export interface NewBoard {
 
 // Task-related interfaces
 export interface Task {
-  _id: string;
   id: string;
   board: string;
   title: string;
