@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import chula from "../assets/chulalongkornHospital.jpeg";
+import taskAndBoardImage from "../assets/taskAndBoard.png";
 
-const SignUpForm = () => {
+const RegisterForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -24,19 +24,16 @@ const SignUpForm = () => {
   };
   return (
     <div className="w-screen h-screen">
-      <div className="grid grid-cols-3 h-full items-center dark:bg-[#1a1a2e]">
-        <div className=" flex px-5 h-full bg-white col-span-3 lg:col-span-2 dark:bg-[#1a1a2e] ">
+      <div className="grid grid-cols-3 h-full items-center dark:bg-gray-900">
+        <div className=" flex px-5 h-full bg-white col-span-3 lg:col-span-2 dark:bg-gray-900 ">
           <div className="flex flex-col gap-5 w-full max-w-lg m-auto self-stretch">
             <div>
               <h2 className="text-2xl font-bold leading-9  text-gray-900 dark:text-white">
-                New Here? Sign up now!
+                New Here? Register now!
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Already has an account?{" "}
-                <a
-                  href="/auth/signin"
-                  className="font-semibold leading-6 text-sky-600 hover:text-sky-500"
-                >
+                <a href="/login" className="bold-text">
                   Login
                 </a>
               </p>
@@ -52,7 +49,7 @@ const SignUpForm = () => {
                   placeholder="mekintown"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="signin-input border-gray-300"
+                  className="login-input border-gray-300"
                 ></input>
               </div>
               <div className="flex flex-col gap-2 col-span-2">
@@ -65,7 +62,7 @@ const SignUpForm = () => {
                   placeholder="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`signin-input border-${
+                  className={`login-input border-${
                     passwordError ? "red-500" : "gray-300"
                   }`}
                 ></input>
@@ -80,7 +77,7 @@ const SignUpForm = () => {
                   placeholder="Type password again"
                   value={password2}
                   onChange={(e) => setPassword2(e.target.value)}
-                  className={`signin-input border-${
+                  className={`login-input border-${
                     passwordError ? "red-500" : "gray-300"
                   }`}
                 ></input>
@@ -98,7 +95,7 @@ const SignUpForm = () => {
                   placeholder="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="signin-input"
+                  className="login-input"
                 ></input>
               </div>
 
@@ -114,7 +111,7 @@ const SignUpForm = () => {
         <div className="relative h-full w-full invisible lg:visible">
           <img
             className="object-cover w-full h-full"
-            src={chula}
+            src={taskAndBoardImage}
             alt="camping"
           ></img>
         </div>
@@ -123,4 +120,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default RegisterForm;

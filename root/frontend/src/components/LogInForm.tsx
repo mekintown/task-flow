@@ -2,7 +2,7 @@
 import { BsCloudHaze2Fill } from "react-icons/bs";
 import { useState } from "react";
 
-const SignInForm = () => {
+const LogInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -11,11 +11,11 @@ const SignInForm = () => {
   };
   return (
     <div className="h-screen">
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 dark:bg-gray-900">
         <div className="flex flex-col justify-center items-center gap-10">
           <BsCloudHaze2Fill className="mx-auto h-10 w-auto text-sky-400" />
           <h2 className="text-center text-2xl font-bold leading-9  text-gray-900 dark:text-white">
-            Sign in to your account
+            Log in to your account
           </h2>
         </div>
 
@@ -34,7 +34,7 @@ const SignInForm = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="signin-input"
+                  className="login-input"
                 />
               </div>
             </div>
@@ -54,25 +54,22 @@ const SignInForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="signin-input"
+                  className="login-input"
                 />
               </div>
             </div>
 
             <div>
               <button type="submit" className="btn-primary">
-                Sign in
+                Log in
               </button>
             </div>
           </form>
 
           <p className="text-center text-sm text-gray-500">
             Not a member?{" "}
-            <a
-              href="/auth/signup"
-              className="font-semibold leading-6 text-sky-400 hover:text-sky-500"
-            >
-              Sign up now
+            <a href="/register" className="bold-text">
+              Register now{" "}
             </a>
           </p>
         </div>
@@ -81,4 +78,4 @@ const SignInForm = () => {
   );
 };
 
-export default SignInForm;
+export default LogInForm;

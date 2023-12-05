@@ -1,14 +1,14 @@
 import Home from "./components/HomePage";
-import SignInForm from "./components/SignInForm";
-import SignUpForm from "./components/SignUpForm";
+import LogInForm from "./components/LogInForm";
 import { Routes, Route } from "react-router-dom";
+import RegisterForm from "./components/RegisterForm";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/auth/signup" element={<SignUpForm />} />
-      <Route path="/auth/signin" element={<SignInForm />} />
+      <Route path="/login" element={<LogInForm />} />
+      <Route path="/register" element={<RegisterForm />} />
     </Routes>
   );
 }
