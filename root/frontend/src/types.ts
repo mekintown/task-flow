@@ -11,22 +11,26 @@ export enum Role {
   Visitor = "Visitor",
 }
 
-// User-related interfaces
-export interface BoardCollaboration {
-  boardId: string;
-  role: Role;
+export interface Pagination {
+  currentPage: number;
+  totalPage: number;
+  totalTasks: number;
+  limit: number;
 }
 
+// User-related interfaces
+
 export interface User {
-  _id: string;
   id: string;
   username: string;
   name: string;
-  passwordHash: string;
-  boards: BoardCollaboration[];
 }
 
-export type NonSensitiveUser = Omit<User, "passwordHash">;
+export interface UserBoard {
+  boardId: Board;
+  role: Role;
+  _id: string;
+}
 
 export interface NewUser {
   username: string;
@@ -47,10 +51,9 @@ export interface Collaborator {
 
 export interface Board {
   _id: string;
-  id: string;
   name: string;
   collaborators: Collaborator[];
-  tasks: Task[];
+  tasks: string[];
 }
 
 export interface NewBoard {
@@ -68,6 +71,11 @@ export interface Task {
   priority?: Priority;
   dueDate?: string;
   createdBy: string;
+}
+
+export interface TasksWithPagination {
+  pagination: Pagination;
+  data: Task[];
 }
 
 export interface NewTask {

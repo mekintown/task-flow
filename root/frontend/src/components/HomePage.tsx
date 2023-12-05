@@ -1,5 +1,7 @@
+import TaskPage from "./TaskPage";
+
 const HomePage = () => {
-  return <></>;
+  return <TaskPage />;
 };
 
 export default HomePage;

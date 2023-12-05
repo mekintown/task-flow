@@ -1,5 +1,6 @@
 import axios from "axios";
 import { User } from "../types";
+import { userLocalStorage } from "../constants";
 
 const baseUrl = "http://localhost:3003/api/auth";
 
@@ -20,7 +21,7 @@ const login = async (credentials: { username: string; password: string }) => {
 };
 
 const logout = (setUser: React.Dispatch<React.SetStateAction<User | null>>) => {
-  window.localStorage.removeItem("loggedBlogappUser");
+  window.localStorage.removeItem(userLocalStorage);
   setUser(null);
 };
 

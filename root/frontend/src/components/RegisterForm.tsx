@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import taskAndBoardImage from "../assets/taskAndBoard.png";
+import authService from "../services/auth";
 
 const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -21,6 +22,10 @@ const RegisterForm = () => {
 
   const onSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    if (!validatePasswords()) {
+      return;
+    }
+    authService.register({ username, password, name });
   };
   return (
     <div className="w-screen h-screen">

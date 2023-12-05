@@ -4,22 +4,20 @@ import RegisterForm from "./components/RegisterForm";
 import HomePage from "./components/HomePage";
 import DefaultLayout from "./components/DefaultLayout";
 import { UserProvider } from "./context/UserContext";
+import TaskPage from "./components/TaskPage";
 
 function App() {
   return (
     <UserProvider>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <DefaultLayout>
-              <HomePage />
-            </DefaultLayout>
-          }
-        />
-        <Route path="/login" element={<LogInForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-      </Routes>
+      <DefaultLayout>
+        <Routes>
+          <Route path="/" element={<></>} />
+          <Route path="/boards/:boardId" element={<TaskPage />}></Route>
+          <Route path="/login" element={<LogInForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          {/* other routes */}
+        </Routes>
+      </DefaultLayout>
     </UserProvider>
   );
 }

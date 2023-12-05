@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { User } from "../types";
+import { userLocalStorage } from "../constants";
 
 // Define the context type for better type safety
 // Define the context type for better type safety
@@ -28,19 +29,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem(
-      "loggedTaskManagementUser"
-    );
+    const loggedUserJSON = window.localStorage.getItem(userLocalStorage);
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      const parsedUser = JSON.parse(loggedUserJSON);
+      // Only update state if user has changed
+      if (!user || user.id !== parsedUser.id) {
+        setUser(parsedUser);
+      }
     }
   }, []);
 
   const logout = () => {
     setUser(null);
     // More comprehensive logout handling can be added here
-    window.localStorage.removeItem("loggedTaskManagementUser");
+    window.localStorage.removeItem(userLocalStorage);
   };
 
   // Memoize the context value to avoid unnecessary re-renders

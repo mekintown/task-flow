@@ -1,5 +1,6 @@
 import axios from "axios";
-import { NewTask, Task } from "../types";
+import { NewTask, Task, TasksWithPagination } from "../types";
+import { userLocalStorage } from "../constants";
 
 // Base URL for task-related requests
 const baseUrl = "http://localhost:3003/api/tasks";
@@ -10,9 +11,11 @@ const axiosInstance = axios.create();
 // Set the token for authorization
 axiosInstance.interceptors.request.use((config) => {
   config.headers = config.headers || {};
-  const token = `Bearer ${localStorage.getItem("loggedUserToken")}`; // Retrieve token from localStorage
-  if (token) {
-    config.headers.Authorization = token;
+
+  const loggedUserJSON = window.localStorage.getItem(userLocalStorage);
+  if (loggedUserJSON) {
+    const user = JSON.parse(loggedUserJSON);
+    config.headers.Authorization = `Bearer ${user.token}`;
   }
   return config;
 });
@@ -34,7 +37,7 @@ const createTask = async (
   }
 };
 
-const getAllTasks = async (): Promise<Task> => {
+const getAllTasks = async (): Promise<Task[]> => {
   try {
     const response = await axiosInstance.get(baseUrl);
     return response.data;
@@ -44,7 +47,9 @@ const getAllTasks = async (): Promise<Task> => {
   }
 };
 
-const getTasksByBoard = async (boardId: string): Promise<Task> => {
+const getTasksByBoard = async (
+  boardId: string
+): Promise<TasksWithPagination> => {
   try {
     const response = await axiosInstance.get(`${baseUrl}/${boardId}`);
     return response.data;

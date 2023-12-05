@@ -66,7 +66,6 @@ const getTasksByBoard = async (
   const limit = parseInt(request.query.limit as string) || 10; // Default is 10 tasks per page
 
   const boardId = request.params.boardId;
-
   try {
     const board = await Board.findById(boardId);
     if (!board) {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Board, NewBoard } from "../types";
+import { userLocalStorage } from "../constants";
 
 // Base URL for board-related requests
 const baseUrl = "http://localhost:3003/api/boards";
@@ -9,9 +10,11 @@ const axiosInstance = axios.create();
 
 axiosInstance.interceptors.request.use((config) => {
   config.headers = config.headers || {};
-  const token = `Bearer ${localStorage.getItem("loggedUserToken")}`; // Retrieve token from localStorage
-  if (token) {
-    config.headers.Authorization = token;
+
+  const loggedUserJSON = window.localStorage.getItem(userLocalStorage);
+  if (loggedUserJSON) {
+    const user = JSON.parse(loggedUserJSON);
+    config.headers.Authorization = `Bearer ${user.token}`;
   }
   return config;
 });
