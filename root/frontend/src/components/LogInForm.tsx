@@ -2,16 +2,13 @@
 import { BsCloudHaze2Fill } from "react-icons/bs";
 import { useState } from "react";
 import authService from "../services/auth";
-import { User } from "../types";
 import axios from "axios";
+import { useUserContext } from "../context/UserContext";
 
-interface Props {
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-}
-
-const LogInForm = ({ setUser }: Props) => {
+const LogInForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { setUser } = useUserContext();
 
   const handleLogin = async (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -21,7 +18,10 @@ const LogInForm = ({ setUser }: Props) => {
         username,
         password,
       });
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      window.localStorage.setItem(
+        "loggedTaskManagementUser",
+        JSON.stringify(user)
+      );
 
       setUser(user);
       setUsername("");

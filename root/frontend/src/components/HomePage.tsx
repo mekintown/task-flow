@@ -1,7 +1,5 @@
-import BoardList from "./BoardList";
-
 const HomePage = () => {
-  return <BoardList />;
+  return <></>;
 };
 
 export default HomePage;
