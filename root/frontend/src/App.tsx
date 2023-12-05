@@ -1,20 +1,15 @@
-import BoardCard from "./components/BoardCard";
-import BoardList from "./components/BoardList";
+import Home from "./components/HomePage";
 import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
-import Sidebar from "./components/Sidebar/Sidebar";
-import TopMenu from "./components/TopMenu";
+import SignUpForm from "./components/SignUpForm";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <div className="flex items-stretch h-screen">
-      <Sidebar />
-      <div className="flex-grow">
-        <TopMenu />
-        <BoardList />
-      </div>
-    </div>
-    // <RegisterForm />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/auth/signup" element={<SignUpForm />} />
+      <Route path="/auth/login" element={<LoginForm />}></Route>
+    </Routes>
   );
 }
 

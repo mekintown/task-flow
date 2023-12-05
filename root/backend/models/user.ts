@@ -30,6 +30,8 @@ const userSchema = new Schema<User>({
   ],
 });
 
+userSchema.index({ username: 1 });
+
 userSchema.plugin(uniqueValidator);
 Object.assign(userSchema.statics, {
   Role,

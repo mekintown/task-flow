@@ -1,32 +1,18 @@
-import { PiCloudBold, PiUsersThree } from "react-icons/pi";
-import { LiaHomeSolid } from "react-icons/lia";
+import { BsPlus, BsFillLightningFill, BsGearFill } from "react-icons/bs";
+import { FaFire, FaPoo } from "react-icons/fa";
+import SideBarIcon from "./SidebarIcon";
 
-function Sidebar() {
+const Sidebar = () => {
   return (
-    <nav>
-      <div className="flex flex-col gap-8 p-8 border-r-[1px] border-neutral-200 h-full w-72">
-        <PiCloudBold size={40} color="#10b981" />
-        <div className="flex items-center gap-4">
-          <LiaHomeSolid size={30} />
-          <h2>Home</h2>
-        </div>
-        <div className="flex items-center gap-4">
-          <PiUsersThree size={30} />
-          <h2>Members</h2>
-        </div>
-        <div>
-          <div className="flex justify-between gap-4">
-            <h1>My Boards</h1>
-            <button>+</button>
-          </div>
-          <div className="flex flex-col gap-2 px-2 mt-2">
-            <h2>Test1</h2>
-            <h2>Work</h2>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <div className="top-0 left-0 h-screen w-20 m-0 flex flex-col text-black border-r border-gray-900/10 shadow-lg">
+      <SideBarIcon icon={<FaFire size="28" />} text="by mekintown" />
+      <hr className="sidebar-hr" />
+      <SideBarIcon icon={<BsPlus size="32" />} text="Add Board +" />
+      <SideBarIcon icon={<BsFillLightningFill size="20" />} />
+      <SideBarIcon icon={<FaPoo size="20" />} />
+      <SideBarIcon icon={<BsGearFill size="22" />} />
+    </div>
   );
-}
+};
 
 export default Sidebar;

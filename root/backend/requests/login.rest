@@ -1,8 +1,8 @@
-POST http://localhost:3003/api/users
+POST http://localhost:3003/api/auth/register
 content-type: application/json
 
 {
-    "username": "mekina",
+    "username": "mekina1",
     "name": "Maekin Namwong",
     "password": "Testpassword1"
 }
@@ -20,7 +20,7 @@ content-type: application/json
 GET http://localhost:3003/api/users
 
 ###
-POST http://localhost:3003/api/login
+POST http://localhost:3003/api/auth/login
 content-type: application/json
 
 {

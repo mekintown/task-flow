@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\" ", 
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\" ",
     "installAll": "concurrently \"npm install\" \"cd backend && npm install\" \"cd frontend && npm install\" "
   },
   "author": "Maekin <maekin.nawmong@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "react-router-dom": "^6.20.1"
   }
 }
