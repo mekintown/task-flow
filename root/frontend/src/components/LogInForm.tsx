@@ -4,11 +4,15 @@ import { useState } from "react";
 import authService from "../services/auth";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const LogInForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { setUser } = useUserContext();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const handleLogin = async (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -24,8 +28,7 @@ const LogInForm = () => {
       );
 
       setUser(user);
-      setUsername("");
-      setPassword("");
+      navigate(from, { replace: true });
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data);

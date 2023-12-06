@@ -3,6 +3,7 @@ import { Priority, Task, TasksWithPagination } from "../types"; // Import your T
 import { taskService } from "../services/task";
 import { useParams } from "react-router-dom";
 import { IoMdArrowRoundForward } from "react-icons/io";
+import DeleteButton from "./DeleteButton";
 
 const TaskPage = () => {
   const [tasksWithPagination, setTasksWithPagination] =
@@ -54,6 +55,23 @@ const TaskPage = () => {
     }
   };
 
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      if (boardId) {
+        await taskService.deleteTask(boardId, taskId);
+        // Filter out the task from the tasksWithPagination.data
+        if (tasksWithPagination) {
+          setTasksWithPagination({
+            ...tasksWithPagination,
+            data: tasksWithPagination.data.filter((task) => task.id !== taskId),
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+    }
+  };
+
   const getPriorityColor = (priority: Priority) => {
     switch (priority) {
       case Priority.High:
@@ -94,12 +112,13 @@ const TaskPage = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="ml-4 flex-shrink-0">
+                  <div className="ml-4 flex-shrink-0 flex gap-2 items-center">
                     <p className="text-xs text-gray-500">
                       {task.dueDate
                         ? new Date(task.dueDate).toLocaleDateString()
                         : "No due date"}
                     </p>
+                    <DeleteButton id={task.id} onDelete={handleDeleteTask} />
                   </div>
                 </div>
               </li>

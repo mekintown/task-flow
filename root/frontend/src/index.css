@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@layer utilities {
+  .animate-shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+
+  .animate-bounce {
+    animation: bounce 1s infinite;
+  }
+}
+
 @layer components {
   .sidebar-icon {
     @apply relative flex items-center justify-center 
