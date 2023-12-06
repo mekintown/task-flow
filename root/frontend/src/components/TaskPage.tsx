@@ -4,50 +4,36 @@ import { taskService } from "../services/task";
 import { useParams } from "react-router-dom";
 import { IoMdArrowRoundForward } from "react-icons/io";
 import DeleteButton from "./DeleteButton";
+import TaskDetailModal from "./TaskDetailModal";
 
 const TaskPage = () => {
   const [tasksWithPagination, setTasksWithPagination] =
     useState<TasksWithPagination | null>(null);
   const [taskName, setTaskName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const { boardId } = useParams();
 
-  useEffect(() => {
-    // Fetch tasks when the boardId changes
+  const fetchTasks = async () => {
     if (boardId) {
-      (async () => {
-        try {
-          const tasksFromService = await taskService.getTasksByBoard(boardId);
-          setTasksWithPagination(tasksFromService);
-        } catch (error) {
-          console.error("Failed to fetch tasks:", error);
-        }
-      })();
+      try {
+        const tasksFromService = await taskService.getTasksByBoard(boardId);
+        setTasksWithPagination(tasksFromService);
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      }
     }
+  };
+  useEffect(() => {
+    fetchTasks();
   }, [boardId]);
 
   const handleCreateTask = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (taskName && boardId) {
       try {
-        const newTask = await taskService.createTask(boardId, {
-          title: taskName,
-        });
-        if (tasksWithPagination) {
-          setTasksWithPagination({
-            ...tasksWithPagination,
-            data: [...(tasksWithPagination?.data || []), newTask as Task],
-          });
-        } else {
-          setTasksWithPagination({
-            data: [newTask as Task],
-            pagination: {
-              currentPage: 0,
-              totalPage: 0,
-              totalTasks: 1,
-              limit: 10,
-            },
-          });
-        }
+        await taskService.createTask(boardId, { title: taskName });
+        fetchTasks(); // Refetch tasks after creation
         setTaskName("");
       } catch (error) {
         console.error("Failed to create task:", error);
@@ -85,6 +71,11 @@ const TaskPage = () => {
     }
   };
 
+  const openTaskModal = (task: Task) => {
+    setSelectedTask(task);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="h-screen p-4">
       <div className="mt-2 space-y-4">
@@ -98,6 +89,7 @@ const TaskPage = () => {
               <li
                 key={task.id}
                 className="bg-white dark:bg-gray-900 shadow overflow-hidden rounded-md px-6 py-4 my-2"
+                onClick={() => openTaskModal(task)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -149,6 +141,14 @@ const TaskPage = () => {
           </button>
         </form>
       </div>
+      {selectedTask && (
+        <TaskDetailModal
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          task={selectedTask}
+          onTaskUpdated={fetchTasks}
+        />
+      )}
     </div>
   );
 };

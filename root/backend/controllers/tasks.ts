@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { HTTP_STATUS } from "../utils/constant";
 import { toNewTask } from "../utils/validators";
 import Task from "../models/task";
-import { AuthorizeRequest } from "../types";
+import { AuthorizeRequest, Priority } from "../types";
 import Board from "../models/board";
 import mongoose from "mongoose";
 
@@ -22,6 +22,7 @@ const createTask = async (request: AuthorizeRequest, response: Response) => {
       ...newTask,
       createdBy: request.user._id,
       board: boardId,
+      priority: newTask.priority || Priority.None,
     });
 
     const savedTask = await task.save({ session });

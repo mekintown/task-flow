@@ -3,6 +3,7 @@ import { Document, ObjectId } from "mongoose";
 
 // Enums
 export enum Priority {
+  None = "None",
   Low = "Low",
   Medium = "Medium",
   High = "High",
@@ -68,7 +69,7 @@ export interface Task extends Document {
   board: ObjectId;
   title: string;
   description?: string;
-  priority?: Priority;
+  priority: Priority;
   dueDate?: string;
   createdBy: ObjectId;
 }
