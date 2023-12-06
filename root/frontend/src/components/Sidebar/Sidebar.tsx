@@ -39,7 +39,11 @@ const Sidebar = () => {
 
   return (
     <div className="top-0 left-0 h-screen w-20 m-0 flex flex-col text-black border-r border-gray-900/10 shadow-lg dark:bg-gray-900">
-      <SideBarIcon icon={<BsCloudHaze2Fill size="24" />} text="Home" />
+      <SideBarIcon
+        icon={<BsCloudHaze2Fill size="24" />}
+        text="Boards"
+        handleClick={() => navigate(`/boards`)}
+      />
       <hr className="sidebar-hr" />
       <SideBarIcon
         icon={<BsPlus size="32" />}

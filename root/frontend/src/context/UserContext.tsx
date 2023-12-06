@@ -14,6 +14,7 @@ interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   logout: () => void;
+  isLoading: boolean;
 }
 
 // Create the context with a type assertion for the initial value
@@ -27,16 +28,20 @@ interface UserProviderProps {
 // The provider component
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem(userLocalStorage);
-    if (loggedUserJSON) {
-      const parsedUser = JSON.parse(loggedUserJSON);
-      // Only update state if user has changed
-      if (!user || user.id !== parsedUser.id) {
+    try {
+      const loggedUserJSON = window.localStorage.getItem(userLocalStorage);
+      if (loggedUserJSON) {
+        const parsedUser = JSON.parse(loggedUserJSON);
         setUser(parsedUser);
       }
+    } catch (error) {
+      console.error("Failed to retrieve user:", error);
     }
+
+    setIsLoading(false); // Set loading to false regardless of the outcome
   }, []);
 
   const logout = () => {
@@ -46,7 +51,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   // Memoize the context value to avoid unnecessary re-renders
-  const contextValue = React.useMemo(() => ({ user, setUser, logout }), [user]);
+  const contextValue = React.useMemo(
+    () => ({ user, setUser, logout, isLoading }),
+    [user]
+  );
   return (
     <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );

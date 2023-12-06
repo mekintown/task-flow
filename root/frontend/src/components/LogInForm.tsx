@@ -5,6 +5,7 @@ import authService from "../services/auth";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { userLocalStorage } from "../constants";
 
 const LogInForm = () => {
   const [username, setUsername] = useState("");
@@ -12,7 +13,10 @@ const LogInForm = () => {
   const { setUser } = useUserContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  if (location.state?.from?.pathname === "/") {
+    location.state = undefined;
+  }
+  const from = location.state?.from?.pathname || "/boards";
 
   const handleLogin = async (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -22,10 +26,7 @@ const LogInForm = () => {
         username,
         password,
       });
-      window.localStorage.setItem(
-        "loggedTaskManagementUser",
-        JSON.stringify(user)
-      );
+      window.localStorage.setItem(userLocalStorage, JSON.stringify(user));
 
       setUser(user);
       navigate(from, { replace: true });

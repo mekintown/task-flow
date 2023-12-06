@@ -8,7 +8,9 @@ interface Props {
 const DefaultLayout = ({ children }: Props) => {
   const location = useLocation();
   const showSidebar =
-    location.pathname !== "/login" && location.pathname !== "/register";
+    location.pathname !== "/login" &&
+    location.pathname !== "/register" &&
+    location.pathname !== "/";
 
   return (
     <div className="flex dark:bg-gray-800">
