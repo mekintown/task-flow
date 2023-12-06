@@ -87,7 +87,7 @@ const TaskPage = () => {
   };
 
   return (
-    <div className="h-screen p-4">
+    <div className="h-screen p-4 flex flex-col gap-4">
       <div className="mt-2 space-y-4">
         {/* Task input omitted for brevity */}
         <ul
@@ -163,6 +163,7 @@ const TaskPage = () => {
         <Pagination
           currentPage={currentPage}
           totalPages={tasksWithPagination.pagination.totalPages}
+          totalTasks={tasksWithPagination.pagination.totalTasks}
           onPageChange={handlePageChange}
         />
       )}

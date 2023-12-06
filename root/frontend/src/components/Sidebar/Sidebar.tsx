@@ -38,7 +38,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="top-0 left-0 h-screen w-20 m-0 flex flex-col text-black border-r border-gray-900/10 shadow-lg dark:bg-gray-900">
+    <div className="top-0 left-0 h-screen w-16 sm:w-20 m-0 flex flex-col text-black border-r border-gray-900/10 shadow-lg dark:bg-gray-900">
       <SideBarIcon
         icon={<BsCloudHaze2Fill size="24" />}
         text="Boards"
