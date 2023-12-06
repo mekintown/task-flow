@@ -14,7 +14,7 @@ export enum Role {
 
 export interface Pagination {
   currentPage: number;
-  totalPage: number;
+  totalPages: number;
   totalTasks: number;
   limit: number;
 }

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { IoMdArrowRoundForward } from "react-icons/io";
 import DeleteButton from "./DeleteButton";
 import TaskDetailModal from "./TaskDetailModal";
+import Pagination from "./Pagination";
 
 const TaskPage = () => {
   const [tasksWithPagination, setTasksWithPagination] =
@@ -12,21 +13,30 @@ const TaskPage = () => {
   const [taskName, setTaskName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const { boardId } = useParams();
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (page = 1) => {
     if (boardId) {
       try {
-        const tasksFromService = await taskService.getTasksByBoard(boardId);
+        const tasksFromService = await taskService.getTasksByBoard(
+          boardId,
+          page
+        );
         setTasksWithPagination(tasksFromService);
+        setCurrentPage(page); // Update current page
       } catch (error) {
         console.error("Failed to fetch tasks:", error);
       }
     }
   };
   useEffect(() => {
-    fetchTasks();
-  }, [boardId]);
+    fetchTasks(currentPage);
+  }, [boardId, currentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    fetchTasks(newPage);
+  };
 
   const handleCreateTask = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -88,7 +98,7 @@ const TaskPage = () => {
             tasksWithPagination.data.map((task) => (
               <li
                 key={task.id}
-                className="bg-white dark:bg-gray-900 shadow overflow-hidden rounded-md px-6 py-4 my-2"
+                className="bg-white dark:bg-gray-900 shadow overflow-hidden rounded-md px-6 py-4 my-4 cursor-pointer"
                 onClick={() => openTaskModal(task)}
               >
                 <div className="flex items-center justify-between">
@@ -147,6 +157,13 @@ const TaskPage = () => {
           setIsOpen={setIsModalOpen}
           task={selectedTask}
           onTaskUpdated={fetchTasks}
+        />
+      )}
+      {tasksWithPagination && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={tasksWithPagination.pagination.totalPages}
+          onPageChange={handlePageChange}
         />
       )}
     </div>

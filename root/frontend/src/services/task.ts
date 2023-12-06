@@ -48,10 +48,14 @@ const getAllTasks = async (): Promise<Task[]> => {
 };
 
 const getTasksByBoard = async (
-  boardId: string
+  boardId: string,
+  page = 1,
+  limit = 10
 ): Promise<TasksWithPagination> => {
   try {
-    const response = await axiosInstance.get(`${baseUrl}/${boardId}`);
+    const response = await axiosInstance.get(`${baseUrl}/${boardId}`, {
+      params: { page, limit },
+    });
     return response.data;
   } catch (error) {
     console.error("Error in getTasksByBoard:", error);
