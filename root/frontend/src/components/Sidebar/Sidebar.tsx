@@ -11,28 +11,34 @@ import { useNavigate } from "react-router-dom";
 import BoardFormModal from "../BoardFormModal";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { boardService } from "../../services/board";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Sidebar = () => {
-  const [boards, setBoards] = useState<UserBoard[]>([]);
-  console.log(boards);
   const navigate = useNavigate();
   const { logout } = useUserContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchUserBoards = async () => {
-      try {
-        const userBoards = await userService.getUserBoards();
-        setBoards(userBoards);
-      } catch (error) {
-        console.error("Failed to fetch user boards:", error);
-        // Handle the error based on your application's requirements
-      }
-    };
-    fetchUserBoards();
-  }, []);
-  const handleBoardClick = (boardId: string) => {
-    navigate(`/boards/${boardId}`); // Navigate to board detail page
+  // Fetching boards using useQuery
+  const { data: boards, isLoading } = useQuery<UserBoard[]>({
+    queryKey: ["boards"],
+    queryFn: userService.getUserBoards,
+  });
+
+  // Mutation for deleting a board
+  const deleteBoardMutation = useMutation({
+    mutationFn: boardService.deleteBoard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards"] }); // Invalidate and refetch boards
+    },
+  });
+
+  const handleDeleteClick = (boardId: string) => {
+    deleteBoardMutation.mutate(boardId); // Use mutation to delete the board
+  };
+
+  const handleLogoutClick = () => {
+    logout();
   };
 
   const handleEditClick = (
@@ -49,21 +55,8 @@ const Sidebar = () => {
     });
   };
 
-  const handleDeleteClick = async (boardId: string) => {
-    try {
-      // Call the service to delete the board, await the result to make sure it's been deleted
-      await boardService.deleteBoard(boardId);
-      // If the deletion was successful, filter out the deleted board from the local state
-      setBoards(boards.filter((board) => board.boardId._id !== boardId));
-      // Optionally, navigate to a confirmation page or display a success message
-    } catch (error) {
-      console.error("Failed to delete the board:", error);
-      // Handle the error, such as displaying an error message to the user
-    }
-  };
-
-  const handleLogoutClick = () => {
-    logout();
+  const handleBoardClick = (boardId: string) => {
+    navigate(`/boards/${boardId}`); // Navigate to board detail page
   };
 
   return (
@@ -79,39 +72,40 @@ const Sidebar = () => {
         text="Add Board +"
         handleClick={() => setIsModalOpen(true)}
       />
-      {boards.map((board) => (
-        <ContextMenu.Root key={board._id}>
-          <ContextMenu.Trigger asChild>
-            <div>
-              <SideBarIcon
-                icon={<BsFillLightningFill size="20" />}
-                text={board.boardId.name}
-                handleClick={() => handleBoardClick(board.boardId._id)}
-              />
-            </div>
-          </ContextMenu.Trigger>
-          <ContextMenu.Content className="bg-white dark:bg-gray-700 p-1 shadow-md rounded z-20">
-            <ContextMenu.Item
-              className="cursor-pointer p-1 dark:text-white"
-              onSelect={() =>
-                handleEditClick(
-                  board.boardId._id,
-                  board.boardId.name,
-                  board.boardId.collaborators
-                )
-              }
-            >
-              Edit
-            </ContextMenu.Item>
-            <ContextMenu.Item
-              className="cursor-pointer p-1 text-red-500"
-              onSelect={() => handleDeleteClick(board.boardId._id)}
-            >
-              Delete
-            </ContextMenu.Item>
-          </ContextMenu.Content>
-        </ContextMenu.Root>
-      ))}
+      {boards &&
+        boards.map((board) => (
+          <ContextMenu.Root key={board._id}>
+            <ContextMenu.Trigger asChild>
+              <div>
+                <SideBarIcon
+                  icon={<BsFillLightningFill size="20" />}
+                  text={board.boardId.name}
+                  handleClick={() => handleBoardClick(board.boardId._id)}
+                />
+              </div>
+            </ContextMenu.Trigger>
+            <ContextMenu.Content className="bg-white dark:bg-gray-700 p-1 shadow-md rounded z-20">
+              <ContextMenu.Item
+                className="cursor-pointer p-1 dark:text-white"
+                onSelect={() =>
+                  handleEditClick(
+                    board.boardId._id,
+                    board.boardId.name,
+                    board.boardId.collaborators
+                  )
+                }
+              >
+                Edit
+              </ContextMenu.Item>
+              <ContextMenu.Item
+                className="cursor-pointer p-1 text-red-500"
+                onSelect={() => handleDeleteClick(board.boardId._id)}
+              >
+                Delete
+              </ContextMenu.Item>
+            </ContextMenu.Content>
+          </ContextMenu.Root>
+        ))}
       <hr className="sidebar-hr" />
       <SideBarIcon
         icon={<BiSolidLogOut size="24" />}

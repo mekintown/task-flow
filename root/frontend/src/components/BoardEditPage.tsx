@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { boardService } from "../services/board";
-import { Collaborator, PopulatedCollaborator, Role, isRole } from "../types";
+import {
+  Collaborator,
+  NewBoard,
+  PopulatedCollaborator,
+  Role,
+  UserBoard,
+  isRole,
+} from "../types";
 import { userService } from "../services/user";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const BoardEditPage = () => {
   const { boardId } = useParams();
@@ -14,6 +22,21 @@ const BoardEditPage = () => {
   );
   const [newCollaboratorUsername, setNewCollaboratorUsername] = useState("");
   const [newCollaboratorRole, setNewCollaboratorRole] = useState(Role.Editor);
+  const queryClient = useQueryClient();
+
+  const updateBoardMutation = useMutation({
+    mutationFn: (data: { boardId: string; updatedBoard: NewBoard }) =>
+      boardService.updateBoard(data.boardId, data.updatedBoard),
+    onSuccess: () => {
+      // Optionally update the boards cache
+      queryClient.setQueryData(["boards"], (oldBoards: UserBoard[]) =>
+        oldBoards.map((b) =>
+          b.boardId._id === boardId ? { ...b, name: boardName } : b
+        )
+      );
+      navigate("/boards");
+    },
+  });
 
   useEffect(() => {
     setBoardName(location.state?.boardName || "");
@@ -58,15 +81,13 @@ const BoardEditPage = () => {
       }
     }
 
-    try {
-      await boardService.updateBoard(boardId, {
+    updateBoardMutation.mutate({
+      boardId, // Passing boardId
+      updatedBoard: {
         name: boardName,
         collaborators: collaboratorsToUpdate,
-      });
-      navigate("/boards");
-    } catch (error) {
-      console.error("Error in updating board:", error);
-    }
+      },
+    });
   };
 
   return (

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { boardService } from "../services/board";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   isOpen: boolean;
@@ -10,15 +11,18 @@ interface Props {
 
 const BoardFormModal = ({ isOpen, setIsOpen }: Props) => {
   const [newBoardName, setNewBoardName] = useState("");
+  const queryClient = useQueryClient();
 
+  const addBoardMutation = useMutation({
+    mutationFn: boardService.createBoard,
+    onSuccess: () => {
+      setIsOpen(false); // Close the modal
+      queryClient.invalidateQueries({ queryKey: ["boards"] }); // Invalidate and refetch boards
+    },
+  });
   const handleAddBoard = async () => {
     if (newBoardName) {
-      try {
-        await boardService.createBoard({ name: newBoardName });
-        setIsOpen(false); // Close the modal on successful creation
-      } catch (error) {
-        console.error("Failed to create board:", error);
-      }
+      addBoardMutation.mutate({ name: newBoardName });
     }
   };
 
