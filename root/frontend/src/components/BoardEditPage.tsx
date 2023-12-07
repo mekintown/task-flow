@@ -29,8 +29,6 @@ const BoardEditPage = () => {
         )
       );
     }
-
-    console.log(collaborators);
   };
 
   const handleUpdateBoard = async () => {

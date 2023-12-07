@@ -10,6 +10,7 @@ import { userService } from "../../services/user";
 import { useNavigate } from "react-router-dom";
 import BoardFormModal from "../BoardFormModal";
 import * as ContextMenu from "@radix-ui/react-context-menu";
+import { boardService } from "../../services/board";
 
 const Sidebar = () => {
   const [boards, setBoards] = useState<UserBoard[]>([]);
@@ -46,6 +47,19 @@ const Sidebar = () => {
         collaborators,
       },
     });
+  };
+
+  const handleDeleteClick = async (boardId: string) => {
+    try {
+      // Call the service to delete the board, await the result to make sure it's been deleted
+      await boardService.deleteBoard(boardId);
+      // If the deletion was successful, filter out the deleted board from the local state
+      setBoards(boards.filter((board) => board.boardId._id !== boardId));
+      // Optionally, navigate to a confirmation page or display a success message
+    } catch (error) {
+      console.error("Failed to delete the board:", error);
+      // Handle the error, such as displaying an error message to the user
+    }
   };
 
   const handleLogoutClick = () => {
@@ -91,9 +105,7 @@ const Sidebar = () => {
             </ContextMenu.Item>
             <ContextMenu.Item
               className="cursor-pointer p-1 text-red-500"
-              onSelect={() => {
-                /* delete logic here */
-              }}
+              onSelect={() => handleDeleteClick(board.boardId._id)}
             >
               Delete
             </ContextMenu.Item>

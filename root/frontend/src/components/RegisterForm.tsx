@@ -2,6 +2,7 @@
 import { useState } from "react";
 import taskAndBoardImage from "../assets/taskAndBoard.png";
 import authService from "../services/auth";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -10,6 +11,7 @@ const RegisterForm = () => {
   const [name, setName] = useState("");
 
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
 
   const validatePasswords = () => {
     if (password !== password2) {
@@ -25,8 +27,11 @@ const RegisterForm = () => {
     if (!validatePasswords()) {
       return;
     }
+
     authService.register({ username, password, name });
+    navigate("/login");
   };
+
   return (
     <div className="w-screen h-screen">
       <div className="grid grid-cols-3 h-full items-center dark:bg-gray-900">
