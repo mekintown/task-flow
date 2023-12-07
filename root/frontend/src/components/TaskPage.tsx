@@ -1,5 +1,6 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { Priority, Task, TasksWithPagination } from "../types"; // Import your Task type
+import { NewTask, Priority, Task, TasksWithPagination } from "../types"; // Import your Task type
 import { taskService } from "../services/task";
 import { useParams } from "react-router-dom";
 import { IoMdArrowRoundForward } from "react-icons/io";
@@ -8,64 +9,60 @@ import TaskDetailModal from "./TaskDetailModal";
 import Pagination from "./Pagination";
 
 const TaskPage = () => {
-  const [tasksWithPagination, setTasksWithPagination] =
-    useState<TasksWithPagination | null>(null);
+  const { boardId } = useParams();
+  const queryClient = useQueryClient();
   const [taskName, setTaskName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const { boardId } = useParams();
 
-  const fetchTasks = async (page = 1) => {
-    if (boardId) {
-      try {
-        const tasksFromService = await taskService.getTasksByBoard(
-          boardId,
-          page
-        );
-        setTasksWithPagination(tasksFromService);
-        setCurrentPage(page); // Update current page
-      } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+  const { data: tasksWithPagination, isLoading } = useQuery({
+    queryKey: ["tasks", boardId, currentPage],
+    queryFn: () => {
+      if (!boardId) {
+        throw Error("No board id provided");
       }
-    }
-  };
-  useEffect(() => {
-    fetchTasks(currentPage);
-  }, [boardId, currentPage]);
+      return taskService.getTasksByBoard(boardId, currentPage);
+    },
+  });
 
-  const handlePageChange = (newPage: number) => {
-    fetchTasks(newPage);
-  };
+  const createTaskMutation = useMutation({
+    mutationFn: (data: { boardId: string; taskData: NewTask }) =>
+      taskService.createTask(data.boardId, data.taskData),
 
-  const handleCreateTask = async (e: React.SyntheticEvent) => {
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["tasks", boardId] });
+    },
+  });
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: (data: { boardId: string; taskId: string }) =>
+      taskService.deleteTask(data.boardId, data.taskId),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["tasks", boardId] });
+    },
+  });
+
+  const handleCreateTask = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (taskName && boardId) {
-      try {
-        await taskService.createTask(boardId, { title: taskName });
-        fetchTasks(); // Refetch tasks after creation
-        setTaskName("");
-      } catch (error) {
-        console.error("Failed to create task:", error);
-      }
+      const taskData: NewTask = { title: taskName };
+      createTaskMutation.mutate({ boardId, taskData });
+      setTaskName("");
     }
   };
 
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      if (boardId) {
-        await taskService.deleteTask(boardId, taskId);
-        // Filter out the task from the tasksWithPagination.data
-        if (tasksWithPagination) {
-          setTasksWithPagination({
-            ...tasksWithPagination,
-            data: tasksWithPagination.data.filter((task) => task.id !== taskId),
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Failed to delete task:", error);
+  const handleDeleteTask = (taskId: string) => {
+    if (boardId) {
+      deleteTaskMutation.mutate({ boardId, taskId });
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    // Method to update the current page, which should trigger a new query
+    setCurrentPage(newPage);
   };
 
   const getPriorityColor = (priority: Priority) => {
@@ -157,7 +154,6 @@ const TaskPage = () => {
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
           task={selectedTask}
-          onTaskUpdated={fetchTasks}
         />
       )}
       {tasksWithPagination && (

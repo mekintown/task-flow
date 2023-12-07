@@ -1,7 +1,7 @@
 // userService.js
 import axios from "axios";
 import { userLocalStorage } from "../constants";
-import { User, UserFromGet } from "../types";
+import { UserFromGet } from "../types";
 
 // Base URL for user-related requests
 const userBaseUrl = "http://localhost:3003/api/users";

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { boardService } from "../services/board";
 import {
-  Collaborator,
   NewBoard,
   PopulatedCollaborator,
   Role,

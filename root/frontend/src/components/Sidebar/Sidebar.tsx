@@ -4,8 +4,8 @@ import { BiSolidLogOut } from "react-icons/bi";
 
 import SideBarIcon from "./SidebarIcon";
 import { useUserContext } from "../../context/UserContext";
-import { Board, PopulatedCollaborator, UserBoard } from "../../types";
-import { useEffect, useRef, useState } from "react";
+import { PopulatedCollaborator, UserBoard } from "../../types";
+import { useState } from "react";
 import { userService } from "../../services/user";
 import { useNavigate } from "react-router-dom";
 import BoardFormModal from "../BoardFormModal";

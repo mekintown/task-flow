@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { taskService } from "../services/task";
 import { Task, Priority, NewTask } from "../types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   task: Task;
-  onTaskUpdated: () => void;
 }
 
-const TaskDetailModal = ({ isOpen, setIsOpen, task, onTaskUpdated }: Props) => {
+const TaskDetailModal = ({ isOpen, setIsOpen, task }: Props) => {
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
   const [priority, setPriority] = useState(task.priority || Priority.None);
@@ -29,7 +30,17 @@ const TaskDetailModal = ({ isOpen, setIsOpen, task, onTaskUpdated }: Props) => {
     }
   }, [task]);
 
-  const handleUpdateTask = async () => {
+  const updateTaskMutation = useMutation({
+    mutationFn: (updatedTask: NewTask) =>
+      taskService.updateTask(task.board, task.id, updatedTask),
+    onSuccess: () => {
+      // Invalidate and refetch
+
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const handleUpdateTask = () => {
     const updatedData: NewTask = {
       title,
       description,
@@ -38,13 +49,11 @@ const TaskDetailModal = ({ isOpen, setIsOpen, task, onTaskUpdated }: Props) => {
     if (dueDate) {
       updatedData.dueDate = dueDate;
     }
-    try {
-      await taskService.updateTask(task.board, task.id, updatedData);
-      setIsOpen(false); // Close the modal on successful update
-      onTaskUpdated();
-    } catch (error) {
-      console.error("Error in updateTask:", error);
-    }
+    updateTaskMutation.mutate(updatedData, {
+      onSuccess: () => {
+        setIsOpen(false); // Close the modal on successful update
+      },
+    });
   };
 
   return (
