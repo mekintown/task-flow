@@ -30,6 +30,18 @@ const removeUserBoard = async (
   );
 };
 
+const updateUserBoardRole = async (
+  userId: ObjectId | string,
+  boardId: ObjectId | string,
+  newRole: Role
+) => {
+  await User.findOneAndUpdate(
+    { _id: userId, "boards.boardId": boardId },
+    { $set: { "boards.$.role": newRole } },
+    { new: true, runValidators: true }
+  );
+};
+
 const createBoard = async (request: ProtectRequest, response: Response) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -149,11 +161,13 @@ const updateBoard = async (request: ProtectRequest, response: Response) => {
   const boardId = request.params.boardId;
   const { name, collaborators } = toNewBoard(request.body);
   const originalBoard = await Board.findById(boardId);
+
   if (!originalBoard) {
     response.status(HTTP_STATUS.NOT_FOUND).json({ error: "Board not found" });
     return;
   }
 
+  // Update board name and collaborators list
   const updatedBoard = await Board.findByIdAndUpdate(
     boardId,
     { name, collaborators },
@@ -161,28 +175,35 @@ const updateBoard = async (request: ProtectRequest, response: Response) => {
   );
 
   if (collaborators) {
-    // Find collaborators to add and remove
-    const collaboratorsToAdd = collaborators.filter(
-      (collaborator) =>
-        !originalBoard.collaborators.some(
-          (c) => c.userId === collaborator.userId
-        )
-    );
-    const collaboratorsToRemove = originalBoard.collaborators.filter(
-      (originalCollaborator) =>
-        !collaborators.some((c) => c.userId === originalCollaborator.userId)
-    );
+    // Determine role changes and additions/removals
+    const updates = collaborators.map((collaborator) => {
+      const originalCollaborator = originalBoard.collaborators.find(
+        (c) => c.userId === collaborator.userId
+      );
+
+      if (!originalCollaborator) {
+        return addUserBoard(collaborator.userId, boardId, collaborator.role); // New collaborator added
+      } else if (originalCollaborator.role !== collaborator.role) {
+        return updateUserBoardRole(
+          collaborator.userId,
+          boardId,
+          collaborator.role
+        ); // Role updated
+      }
+      return Promise.resolve(); // No change
+    });
+
+    const removals = originalBoard.collaborators
+      .filter(
+        (originalCollaborator) =>
+          !collaborators.some((c) => c.userId === originalCollaborator.userId)
+      )
+      .map((collaborator) => removeUserBoard(collaborator.userId, boardId)); // Collaborator removed
 
     // Perform batch operations
-    await Promise.all([
-      ...collaboratorsToAdd.map((collaborator) =>
-        addUserBoard(collaborator.userId, boardId, collaborator.role)
-      ),
-      ...collaboratorsToRemove.map((collaborator) =>
-        removeUserBoard(collaborator.userId, boardId)
-      ),
-    ]);
+    await Promise.all([...updates, ...removals]);
   }
+
   response.json(updatedBoard);
 };
 

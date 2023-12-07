@@ -9,51 +9,13 @@ import { useEffect, useRef, useState } from "react";
 import { userService } from "../../services/user";
 import { useNavigate } from "react-router-dom";
 import BoardFormModal from "../BoardFormModal";
-
-interface ContextMenuState {
-  board: UserBoard | null;
-  x: number;
-  y: number;
-}
+import * as ContextMenu from "@radix-ui/react-context-menu";
 
 const Sidebar = () => {
   const [boards, setBoards] = useState<UserBoard[]>([]);
   const navigate = useNavigate();
   const { logout } = useUserContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [contextMenu, setContextMenu] = useState<ContextMenuState>({
-    board: null,
-    x: 0,
-    y: 0,
-  });
-  const contextMenuRef = useRef(null);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (
-  //     event: React.MouseEvent<Element, MouseEvent>
-  //   ) => {
-  //     if (
-  //       contextMenuRef.current &&
-  //       !contextMenuRef.current.contains(event.target)
-  //     ) {
-  //       setContextMenu({ board: null, x: 0, y: 0 }); // Close the context menu
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", (e) => handleClickOutside(e));
-  //   return () => {
-  //     // Cleanup the event listener
-  //     document.removeEventListener("mousedown", (e) => handleClickOutside(e));
-  //   };
-  // }, []);
-
-  const handleRightClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    board: UserBoard
-  ) => {
-    event.preventDefault();
-    setContextMenu({ board, x: event.clientX, y: event.clientY });
-  };
 
   useEffect(() => {
     const fetchUserBoards = async () => {
@@ -68,7 +30,7 @@ const Sidebar = () => {
     fetchUserBoards();
   }, []);
 
-  const handleBoardClick = (boardId: string, boardName: string) => {
+  const handleBoardClick = (boardId: string) => {
     navigate(`/boards/${boardId}`); // Navigate to board detail page
   };
 
@@ -98,48 +60,36 @@ const Sidebar = () => {
         text="Add Board +"
         handleClick={() => setIsModalOpen(true)}
       />
-      {contextMenu.board && (
-        <div
-          style={{ top: contextMenu.y, left: contextMenu.x }}
-          className="absolute bg-white p-2 border z-20"
-        >
-          {contextMenu.board && (
-            <div
-              ref={contextMenuRef} // Attach the ref here
-              style={{ top: contextMenu.y, left: contextMenu.x }}
-              onClick={() =>
-                handleEditClick(
-                  contextMenu.board!._id,
-                  contextMenu.board!.boardId.name
-                )
+      {boards.map((board) => (
+        <ContextMenu.Root key={board._id}>
+          <ContextMenu.Trigger asChild>
+            <div>
+              <SideBarIcon
+                icon={<BsFillLightningFill size="20" />}
+                text={board.boardId.name}
+                handleClick={() => handleBoardClick(board.boardId._id)}
+              />
+            </div>
+          </ContextMenu.Trigger>
+          <ContextMenu.Content className="bg-white dark:bg-gray-700 p-1 shadow-md rounded z-20">
+            <ContextMenu.Item
+              className="cursor-pointer p-1 dark:text-white"
+              onSelect={() =>
+                handleEditClick(board.boardId._id, board.boardId.name)
               }
             >
               Edit
-            </div>
-          )}
-          <div
-            onClick={() => {
-              /* delete logic here */
-            }}
-            className="text-red-500"
-          >
-            Delete
-          </div>
-        </div>
-      )}
-      {boards.map((board) => (
-        <div
-          key={board._id}
-          onContextMenu={(event) => handleRightClick(event, board)}
-        >
-          <SideBarIcon
-            icon={<BsFillLightningFill size="20" />}
-            text={board.boardId.name}
-            handleClick={() =>
-              handleBoardClick(board.boardId._id, board.boardId.name)
-            }
-          />
-        </div>
+            </ContextMenu.Item>
+            <ContextMenu.Item
+              className="cursor-pointer p-1 text-red-500"
+              onSelect={() => {
+                /* delete logic here */
+              }}
+            >
+              Delete
+            </ContextMenu.Item>
+          </ContextMenu.Content>
+        </ContextMenu.Root>
       ))}
       <hr className="sidebar-hr" />
       <SideBarIcon
