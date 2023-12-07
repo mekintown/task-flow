@@ -4,7 +4,7 @@ import { BiSolidLogOut } from "react-icons/bi";
 
 import SideBarIcon from "./SidebarIcon";
 import { useUserContext } from "../../context/UserContext";
-import { Board, UserBoard } from "../../types";
+import { Board, PopulatedCollaborator, UserBoard } from "../../types";
 import { useEffect, useRef, useState } from "react";
 import { userService } from "../../services/user";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import * as ContextMenu from "@radix-ui/react-context-menu";
 
 const Sidebar = () => {
   const [boards, setBoards] = useState<UserBoard[]>([]);
+  console.log(boards);
   const navigate = useNavigate();
   const { logout } = useUserContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,11 +35,16 @@ const Sidebar = () => {
     navigate(`/boards/${boardId}`); // Navigate to board detail page
   };
 
-  const handleEditClick = (boardId: string, boardName: string) => {
+  const handleEditClick = (
+    boardId: string,
+    boardName: string,
+    collaborators: PopulatedCollaborator[]
+  ) => {
     navigate(`/boards/${boardId}/edit`, {
       state: {
-        boardId: boardId,
-        boardName: boardName,
+        boardId,
+        boardName,
+        collaborators,
       },
     });
   };
@@ -75,7 +81,11 @@ const Sidebar = () => {
             <ContextMenu.Item
               className="cursor-pointer p-1 dark:text-white"
               onSelect={() =>
-                handleEditClick(board.boardId._id, board.boardId.name)
+                handleEditClick(
+                  board.boardId._id,
+                  board.boardId.name,
+                  board.boardId.collaborators
+                )
               }
             >
               Edit

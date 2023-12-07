@@ -12,6 +12,10 @@ export enum Role {
   Visitor = "Visitor",
 }
 
+export function isRole(value: string): value is Role {
+  return Object.values(Role).includes(value as Role);
+}
+
 export interface Pagination {
   currentPage: number;
   totalPages: number;
@@ -22,7 +26,7 @@ export interface Pagination {
 // User-related interfaces
 
 export interface User {
-  id: string;
+  _id: string;
   username: string;
   name: string;
 }
@@ -50,11 +54,15 @@ export interface Collaborator {
   role: Role;
 }
 
+export interface PopulatedCollaborator {
+  userId: User;
+  role: Role;
+}
+
 export interface Board {
   _id: string;
   name: string;
-  collaborators: Collaborator[];
-  tasks: string[];
+  collaborators: PopulatedCollaborator[];
 }
 
 export interface NewBoard {

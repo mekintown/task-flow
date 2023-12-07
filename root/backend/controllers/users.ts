@@ -16,7 +16,11 @@ const getUserBoards = async (request: ProtectRequest, response: Response) => {
     const userWithBoards = await User.findById(userId)
       .populate({
         path: "boards.boardId",
-        select: "name tasks collaborators",
+        select: "name collaborators",
+        populate: {
+          path: "collaborators.userId",
+          select: "username name _id",
+        },
       })
       .lean();
 
