@@ -5,7 +5,8 @@ import HomePage from "./components/HomePage";
 import DefaultLayout from "./components/DefaultLayout";
 import TaskPage from "./components/TaskPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import DashBoardPage from "./components/BoardsPage";
+import BoardsPage from "./components/BoardsPage";
+import BoardEditPage from "./components/BoardEditPage";
 
 function App() {
   return (
@@ -15,8 +16,12 @@ function App() {
         <Route path="/login" element={<LogInForm />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/boards" element={<DashBoardPage />} />
+          <Route path="/boards" element={<BoardsPage />} />
           <Route path="/boards/:boardId" element={<TaskPage />}></Route>
+          <Route
+            path="/boards/:boardId/edit"
+            element={<BoardEditPage />}
+          ></Route>
         </Route>
       </Routes>
     </DefaultLayout>

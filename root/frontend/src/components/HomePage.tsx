@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 import { BsCloudHaze2Fill } from "react-icons/bs"; // Ensure to install react-icons if not already
+import CreateBoardPicture from "../assets/create-board.png";
+import OrganizeTaskPicture from "../assets/organize-task.png";
+import ResponsiveDesignPicture from "../assets/responsive-design.png";
 
 const HomePage = () => {
   return (
@@ -40,12 +43,12 @@ const HomePage = () => {
           <div className="flex flex-wrap mb-8">
             <div className="w-full sm:w-1/2 p-4">
               <img
-                src="placeholder-feature-image.jpg"
+                src={CreateBoardPicture}
                 alt="Create Board Feature"
                 className="rounded shadow-lg"
               />
             </div>
-            <div className="w-full sm:w-1/2 p-4 flex flex-col justify-center">
+            <div className="w-full sm:w-1/2 p-4 flex flex-col mt-4">
               <h3 className="text-2xl font-bold mb-3">Create Your Board</h3>
               <p>Invite people to join and collaborate on tasks effectively.</p>
             </div>
@@ -59,7 +62,7 @@ const HomePage = () => {
             </div>
             <div className="w-full sm:w-1/2 p-4">
               <img
-                src="placeholder-feature-image.jpg"
+                src={OrganizeTaskPicture}
                 alt="Organize Task Feature"
                 className="rounded shadow-lg"
               />
@@ -70,9 +73,9 @@ const HomePage = () => {
           <div className="flex flex-wrap">
             <div className="w-full sm:w-1/2 p-4">
               <img
-                src="placeholder-feature-image.jpg"
+                src={ResponsiveDesignPicture}
                 alt="Responsive Design"
-                className="rounded shadow-lg"
+                className="rounded max-h-96"
               />
             </div>
             <div className="w-full sm:w-1/2 p-4 flex flex-col justify-center">
