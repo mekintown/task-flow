@@ -178,25 +178,29 @@ const updateBoard = async (request: ProtectRequest, response: Response) => {
     // Determine role changes and additions/removals
     const updates = collaborators.map((collaborator) => {
       const originalCollaborator = originalBoard.collaborators.find(
-        (c) => c.userId === collaborator.userId
+        (c) => c.userId == collaborator.userId
       );
 
+      console.log(collaborator);
       if (!originalCollaborator) {
+        console.log("role equal");
         return addUserBoard(collaborator.userId, boardId, collaborator.role); // New collaborator added
       } else if (originalCollaborator.role !== collaborator.role) {
+        console.log("role not equal");
         return updateUserBoardRole(
           collaborator.userId,
           boardId,
           collaborator.role
         ); // Role updated
       }
+      console.log("not met condition");
       return Promise.resolve(); // No change
     });
 
     const removals = originalBoard.collaborators
       .filter(
         (originalCollaborator) =>
-          !collaborators.some((c) => c.userId === originalCollaborator.userId)
+          !collaborators.some((c) => c.userId == originalCollaborator.userId)
       )
       .map((collaborator) => removeUserBoard(collaborator.userId, boardId)); // Collaborator removed
 

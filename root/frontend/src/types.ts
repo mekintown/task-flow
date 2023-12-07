@@ -31,6 +31,12 @@ export interface User {
   name: string;
 }
 
+export interface UserFromGet {
+  id: string;
+  username: string;
+  name: string;
+}
+
 export interface UserBoard {
   boardId: Board;
   role: Role;

@@ -8,8 +8,6 @@ const getAllUsers = async (_request: Request, response: Response) => {
   response.json(users);
 };
 
-// In userController.js
-
 const getUserBoards = async (request: ProtectRequest, response: Response) => {
   try {
     const userId = request.user._id; // Assuming you have the user's ID from the request
@@ -43,9 +41,32 @@ const getUserBoards = async (request: ProtectRequest, response: Response) => {
   }
 };
 
+const findUserByUsername = async (request: Request, response: Response) => {
+  const username = request.params.username;
+  try {
+    const user = await User.findOne({ username: username }).exec();
+    if (!user) {
+      response.status(HTTP_STATUS.NOT_FOUND).json({ error: "User not found" });
+      return;
+    }
+    response.json(user);
+  } catch (error) {
+    if (error instanceof Error) {
+      response
+        .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+        .json({ error: error.message });
+    } else {
+      response
+        .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+        .json({ error: "An unknown error occurred" });
+    }
+  }
+};
+
 const userController = {
   getAllUsers,
   getUserBoards,
+  findUserByUsername,
 };
 
 export default userController;

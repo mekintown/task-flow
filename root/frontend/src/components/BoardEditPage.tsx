@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { boardService } from "../services/board";
 import { Collaborator, PopulatedCollaborator, Role, isRole } from "../types";
+import { userService } from "../services/user";
 
 const BoardEditPage = () => {
   const { boardId } = useParams();
@@ -11,41 +12,53 @@ const BoardEditPage = () => {
   const [collaborators, setCollaborators] = useState(
     location.state?.collaborators || []
   );
-  const [newCollaborator, setNewCollaborator] = useState({
-    username: "",
-    role: Role.Editor, // Default role for new collaborator
-  });
+  const [newCollaboratorUsername, setNewCollaboratorUsername] = useState("");
+  const [newCollaboratorRole, setNewCollaboratorRole] = useState(Role.Editor);
 
   useEffect(() => {
-    // Assuming boardName and collaborators are passed correctly
     setBoardName(location.state?.boardName || "");
     setCollaborators(location.state?.collaborators || []);
   }, [location.state]);
 
   const handleRoleChange = (userId: string, newRole: Role) => {
-    setCollaborators(
-      collaborators.map((collaborator: Collaborator) =>
-        collaborator.userId === userId
-          ? { ...collaborator, role: newRole }
-          : collaborator
-      )
-    );
+    console.log(collaborators);
+    if (isRole(newRole)) {
+      setCollaborators(
+        collaborators.map((collab: PopulatedCollaborator) =>
+          collab.userId._id === userId ? { ...collab, role: newRole } : collab
+        )
+      );
+    }
+
+    console.log(collaborators);
   };
 
   const handleUpdateBoard = async () => {
     if (!boardId) {
       console.error("Board ID is undefined");
-      // Handle the undefined case - show an error or redirect
       return;
     }
 
-    // Map the populated collaborators to the expected format (id and role only)
     const collaboratorsToUpdate = collaborators.map(
       (collaborator: PopulatedCollaborator) => ({
-        userId: collaborator.userId._id, // Assuming _id is the field for the user's ID
+        userId: collaborator.userId._id,
         role: collaborator.role,
       })
     );
+
+    if (newCollaboratorUsername) {
+      // Add logic to find user by username and get the user ID
+      // For now, let's assume you have a function `findUserByUsername` that returns the user ID
+      const newUser = await userService.findUserByUsername(
+        newCollaboratorUsername
+      );
+      if (newUser) {
+        collaboratorsToUpdate.push({
+          userId: newUser.id,
+          role: newCollaboratorRole,
+        });
+      }
+    }
 
     try {
       await boardService.updateBoard(boardId, {
@@ -59,9 +72,9 @@ const BoardEditPage = () => {
   };
 
   return (
-    <div className="min-h-screen  dark:bg-gray-900 p-6">
+    <div className="min-h-screen  bg-white dark:bg-gray-800  p-6">
       <div
-        className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-lg 
+        className="max-w-5xl mx-auto rounded-lg 
       "
       >
         <div className="p-6">
@@ -85,45 +98,38 @@ const BoardEditPage = () => {
               />
             </div>
             <div>
-              <label
-                className="block text-gray-700 dark:text-gray-200 text-sm font-semibold mb-2"
-                htmlFor="addUser"
-              >
-                Add Collaborator
-              </label>
-              <div className="flex">
-                <input
-                  type="text"
-                  placeholder="Enter username"
-                  value={newCollaborator.username}
-                  onChange={(e) =>
-                    setNewCollaborator({
-                      ...newCollaborator,
-                      username: e.target.value,
-                    })
-                  }
-                  className="shadow-sm border rounded-l w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                />
-                <select
-                  value={newCollaborator.role}
-                  onChange={(e) =>
-                    setNewCollaborator({
-                      ...newCollaborator,
-                      role: e.target.value as Role,
-                    })
-                  }
-                  className="shadow-sm border-t border-b border-r rounded-r py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 focus:outline-none focus:ring focus:border-blue-300"
+              <div className="mb-6">
+                <label
+                  className="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2"
+                  htmlFor="addUser"
                 >
-                  {/* Iterate over roles */}
-                  {Object.values(Role).map(
-                    (roleValue) =>
-                      roleValue !== Role.Owner && (
-                        <option key={roleValue} value={roleValue}>
-                          {roleValue}
-                        </option>
-                      )
-                  )}
-                </select>
+                  Add Collaborator
+                </label>
+                <div className="flex space-x-4">
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    value={newCollaboratorUsername}
+                    onChange={(e) => setNewCollaboratorUsername(e.target.value)}
+                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                  />
+                  <select
+                    value={newCollaboratorRole}
+                    onChange={(e) =>
+                      setNewCollaboratorRole(e.target.value as Role)
+                    }
+                    className="shadow-sm border rounded py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 focus:outline-none focus:ring focus:border-blue-300"
+                  >
+                    {Object.values(Role).map(
+                      (roleValue) =>
+                        roleValue !== Role.Owner && (
+                          <option key={roleValue} value={roleValue}>
+                            {roleValue}
+                          </option>
+                        )
+                    )}
+                  </select>
+                </div>
               </div>
             </div>
           </div>

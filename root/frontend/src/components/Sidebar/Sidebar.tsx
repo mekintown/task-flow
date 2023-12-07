@@ -30,7 +30,6 @@ const Sidebar = () => {
     };
     fetchUserBoards();
   }, []);
-
   const handleBoardClick = (boardId: string) => {
     navigate(`/boards/${boardId}`); // Navigate to board detail page
   };

@@ -12,5 +12,10 @@ usersRouter.get(
   asyncHandler(userController.getUserBoards)
 );
 
+usersRouter.get(
+  "/find/:username",
+  asyncHandler(userController.findUserByUsername)
+);
+
 // export the router
 export default usersRouter;

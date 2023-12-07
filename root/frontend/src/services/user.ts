@@ -1,6 +1,7 @@
 // userService.js
 import axios from "axios";
 import { userLocalStorage } from "../constants";
+import { User, UserFromGet } from "../types";
 
 // Base URL for user-related requests
 const userBaseUrl = "http://localhost:3003/api/users";
@@ -30,7 +31,18 @@ const getUserBoards = async () => {
   }
 };
 
+const findUserByUsername = async (username: string): Promise<UserFromGet> => {
+  try {
+    const response = await axiosInstance.get(`${userBaseUrl}/find/${username}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in findUserByUsername:", error);
+    throw error;
+  }
+};
+
 // Exporting the userService
 export const userService = {
   getUserBoards,
+  findUserByUsername,
 };
