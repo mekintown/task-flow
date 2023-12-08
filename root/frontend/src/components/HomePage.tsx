@@ -33,9 +33,9 @@ const HomePage = () => {
       </div>
 
       {/* Features Section */}
-      <div className="bg-white py-16">
+      <div className="bg-white dark:bg-gray-900 py-16">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">
             Features
           </h2>
 
@@ -49,16 +49,24 @@ const HomePage = () => {
               />
             </div>
             <div className="w-full sm:w-1/2 p-4 flex flex-col mt-4">
-              <h3 className="text-2xl font-bold mb-3">Create Your Board</h3>
-              <p>Invite people to join and collaborate on tasks effectively.</p>
+              <h3 className="text-2xl font-bold mb-3 dark:text-white">
+                Create Your Board
+              </h3>
+              <p className="dark:text-gray-50">
+                Invite people to join and collaborate on tasks effectively.
+              </p>
             </div>
           </div>
 
           {/* Feature 2 */}
           <div className="flex flex-wrap mb-8">
             <div className="w-full sm:w-1/2 p-4 flex flex-col justify-center order-last sm:order-first">
-              <h3 className="text-2xl font-bold mb-3">Organize Tasks</h3>
-              <p>Work together with friends to manage tasks within boards.</p>
+              <h3 className="text-2xl font-bold mb-3 dark:text-white">
+                Organize Tasks
+              </h3>
+              <p className="dark:text-gray-90">
+                Work together with friends to manage tasks within boards.
+              </p>
             </div>
             <div className="w-full sm:w-1/2 p-4">
               <img
@@ -79,10 +87,10 @@ const HomePage = () => {
               />
             </div>
             <div className="w-full sm:w-1/2 p-4 flex flex-col justify-center">
-              <h3 className="text-2xl font-bold mb-3">
+              <h3 className="text-2xl font-bold mb-3 dark:text-white">
                 Responsive & Dark Mode
               </h3>
-              <p>
+              <p className="dark:text-gray-50">
                 Enjoy a responsive design that supports all devices and dark
                 mode for comfortable viewing.
               </p>
